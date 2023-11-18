@@ -8,9 +8,9 @@ public class GameEngine : BackgroundService
     private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(1000);
     private readonly GameBoard _gameBoard;
 
-    public GameEngine(GameBoard gameState)
+    public GameEngine(GameBoard gameBoard)
     {
-        _gameBoard = gameState;
+        _gameBoard = gameBoard;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
