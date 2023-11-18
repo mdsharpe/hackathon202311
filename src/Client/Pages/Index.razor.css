@@ -34,6 +34,7 @@
  
 .tile-EmptyTile {
     visibility: hidden;
+    transition: color 2s linear;
 }
 
 .tile-RedTile {
