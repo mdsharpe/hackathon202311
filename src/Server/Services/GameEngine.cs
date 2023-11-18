@@ -22,9 +22,9 @@ public class GameEngine : BackgroundService
             // TODO here, do stuff we want to do the board e.g. create new tiles
             if (_gameBoard.Tiles.Length == 0)
             {
-                int xSzie = 10;
-                int ySize = 15;
-                _gameBoard.InitializeTiles(xSzie,ySize);
+                int xSize = GlobalConstants.xSize;
+                int ySize = GlobalConstants.ySize; ;
+                _gameBoard.InitializeTiles(xSize,ySize);
             }
 
             await taskDelay;

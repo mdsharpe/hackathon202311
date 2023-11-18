@@ -4,17 +4,18 @@
 <PageTitle>Index</PageTitle>
 <style>
   .game-board {
-    display:table;
     background-color: #333333;
+    border-collapse: separate;
+    border-spacing: 5px 5px;
+    display:table;
+    height: calc(100vh - 4rem - 10px);
+    width: calc(100vw - 2rem - 15px);
   }
   .game-tile {
-    background-size: 3rem;
     border-radius: 5px;
-    border-spacing: 5px;
-    padding: 5px;
     display: inline-block;
-    height: 3rem;
-    width: 3rem;
+    height: calc((100vh - 4rem - 10px) / @rows);
+    width: calc((100vw - 2rem - 30px) / @cols);
   }
   .tile-EmptyTile {
     visibility: hidden;
@@ -48,10 +49,11 @@
 
 @code {
     private readonly Subject<bool> _disposed = new();
-    private IDisposable _gameBoardSubscription;
-    private int rows = 15;
-    private int cols = 10;
-    
+    private IDisposable _gameBoardSubscription = default!;
+    public string name = "Christopher";
+    private int rows = GlobalConstants.ySize;
+    private int cols = GlobalConstants.xSize;
+
     public GameBoard? Board { get; set; }
 
     protected override async Task OnInitializedAsync()
