@@ -1,3 +1,14 @@
-﻿.tile-button {
-    
+﻿.game-tile {
+    border: 1px solid transparent;
+}
+
+    .game-tile.selected {
+        border-color: #fff;
+    }
+
+.tile-button {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border: 0 none;
 }
