@@ -35,6 +35,11 @@ public class TileSmasher
         DestroyTiles(tilesToDestroy);
     }
 
+    /// <summary>
+    /// Either check each row or check each column for a string of at least three matching tiles.
+    /// </summary>
+    /// <param name="checkRows">If we're not checking each row, we're checking each column.</param>
+    /// <returns>A non-unique list of coordinates of tiles to smash.</returns>
     private List<Coordinates> CheckDimension(bool checkRows)
     {
         var confirmedTilesToDestroyForDimension = new List<Coordinates>();
@@ -42,14 +47,14 @@ public class TileSmasher
         for (var a = 0; a < GetDimensionLength(getRowLength: checkRows); a++)
         {
             // If we're checking rows, we are iterating along each column here, & vice versa
-            // We need to reset once we start a new row/column
+            // We need to reset once we start iterating over a new row/column
             var matchedTile = Tile.EmptyCell; // Default
             var matchedTilesCounter = 0;
             var potentialTilesToDestroy = new List<Coordinates>();
 
             for (var b = 0; b < GetDimensionLength(getRowLength: !checkRows); b++)
             {
-                // If we're checking columns, we are iterating along each row here; & vice versa
+                // If we're checking columns, we are iterating along each row here, & vice versa
                 if (_gameBoard.Tiles[GetRow(checkRows, a, b)][GetColumn(checkRows, a, b)] == matchedTile)
                 {
                     matchedTilesCounter++;
@@ -91,7 +96,7 @@ public class TileSmasher
 
         return confirmedTilesToDestroyForDimension;
     }
-
+    
     private int GetDimensionLength(bool getRowLength)
     {
         // Assume all rows and columns are the same respective lengths
