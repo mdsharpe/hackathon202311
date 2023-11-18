@@ -5,8 +5,8 @@
 
 <style>
     .game-tile {
-        height: calc((100vh - 10rem) / @rows);
-        width: calc((100vw - 2rem - 80px) / @cols);
+        height: calc(@TileCssUtil.Height);
+        width: calc(@TileCssUtil.Width);
     }
 </style>
 
@@ -41,8 +41,6 @@
     private readonly Subject<bool> _disposed = new();
     private IDisposable? _gameBoardSubscription;
     public string name = "Christopher";
-    private int rows = GlobalConstants.ySize;
-    private int cols = GlobalConstants.xSize;
 
     public GameBoard? Board { get; set; }
     public readonly BehaviorSubject<Coordinates?> SelectedTile = new(null);
