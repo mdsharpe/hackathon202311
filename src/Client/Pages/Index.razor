@@ -31,21 +31,25 @@
   }
 </style>
 
-<table id="game-board" class="game-board">
-  @for (var rowNum = 0; rowNum < rows; rowNum++)
-  {
-    <tr>
-      @for (var colNum = 0; colNum < cols; colNum++)
-      {
-        <td id="tile" class="game-tile @GetTileColour(new Coordinates(colNum, rowNum))">
-          &nbsp;
-          <input type="button" class="tile-button" @onclick="OnTileClick" />
-        </td>
-      }
-    </tr>
-  }
-</table>
-<MovementOverlay />
+@if (Board is not null)
+{
+    <table id="game-board" class="game-board">
+        @for (var rowNum = 0; rowNum < rows; rowNum++)
+        {
+            <tr>
+                @for (var colNum = 0; colNum < cols; colNum++)
+                {
+                    <td id="tile" class="game-tile @GetTileColour(new Coordinates(colNum, rowNum))
+                    ">
+                        &nbsp;
+                        <input type="button" class="tile-button" @onclick="() => OnTileClick(colNum, rowNum)" />
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+    <MovementOverlay />
+}
 
 @code {
     private readonly Subject<bool> _disposed = new();
@@ -80,9 +84,8 @@
         _gameBoardSubscription?.Dispose();
     }
 
-    private void OnTileClick()
+    private void OnTileClick(int x, int y)
     {
-        
     }
 
     private string GetTileColour(Coordinates coordinates) {
