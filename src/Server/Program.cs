@@ -7,14 +7,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services
     .AddHostedService<GameEngine>()
-    .AddSingleton<GameBoard>();
+    .AddSingleton<GameBoard>()
+    .AddSingleton<GameHub>()
+    .AddSingleton<TileSmasher>();
 
-builder.Services.AddSignalR(configure =>
-{
+builder.Services
+    .AddSignalR(configure =>
+    {
 #if DEBUG
-    configure.EnableDetailedErrors = true;
+        configure.EnableDetailedErrors = true;
 #endif
-}).AddMessagePackProtocol();
+    });
 
 var app = builder.Build();
 

@@ -4,22 +4,32 @@
 <PageTitle>Index</PageTitle>
 <style>
   .game-board {
-    display:table;
     background-color: #333333;
+    border-collapse: separate;
+    border-spacing: 5px 5px;
+    display:table;
+    height: calc(100vh - 4rem - 10px);
+    width: calc(100vw - 2rem - 15px);
   }
   .game-tile {
-    height: 3rem;
-    width: 3rem;
-    border: 1pt solid #e3c245;
     border-radius: 5px;
-    background-image: url('/icon-192.png');
-    background-size: 3rem;
     display: inline-block;
-    border-spacing: 1px;
+    height: calc((100vh - 4rem - 10px) / @rows);
+    width: calc((100vw - 2rem - 30px) / @cols);
+  }
+  .tile-EmptyTile {
+    visibility: hidden;
+  }
+  .tile-RedTile {
+    background-color: #c62234;
+  }
+  .tile-GreenTile {
+    background-color: #34a622;
+  }
+  .tile-BlueTile {
+    background-color: #1234e6;
   }
 </style>
-
-<h1>Hello, @name</h1>
 
 <table id="game-board" class="game-board">
   @for (var rowNum = 0; rowNum < rows; rowNum++)
@@ -27,28 +37,26 @@
     <tr>
       @for (var colNum = 0; colNum < cols; colNum++)
       {
-        <td id="tile" class="game-tile">
+        <td id="tile" class="game-tile @GetTileColour(new Coordinates(colNum, rowNum))">
           &nbsp;
+          <input type="button" class="tile-button" @onclick="OnTileClick" />
         </td>
       }
     </tr>
   }
 </table>
-
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+<MovementOverlay />
 
 @code {
     private readonly Subject<bool> _disposed = new();
-    private IDisposable _gameBoardSubscription;
+    private IDisposable _gameBoardSubscription = default!;
     public string name = "Christopher";
-    private int rows = 15;
-    private int cols = 10;
+    private int rows = GlobalConstants.ySize;
+    private int cols = GlobalConstants.xSize;
 
     public GameBoard? Board { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _gameBoardSubscription = _signalRClient.OnBoardChanged(board =>
         {
@@ -56,11 +64,34 @@ Welcome to your new app.
             Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(board));
             StateHasChanged();
         });
+
+        await _signalRClient.Start();
+
+        Board = await _signalRClient.GetGameBoard();
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(Board));
+
+        await base.OnInitializedAsync();
     }
 
     public void Dispose()
     {
+        _signalRClient.Stop().GetAwaiter().GetResult();
         _disposed.OnNext(true);
         _gameBoardSubscription?.Dispose();
+    }
+
+    private void OnTileClick()
+    {
+        
+    }
+
+    private string GetTileColour(Coordinates coordinates) {
+        if (Board is null)
+        {
+            return "tile-BlueTile";
+        }
+
+        var tileType = Board.Tiles[coordinates.Y][coordinates.X];
+        return $"tile-{tileType.ToString()}";
     }
 }

@@ -7,7 +7,6 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services
-    .AddSingleton<GameStateWrapper>()
     .AddSingleton<GameSignalRClient>();
 
 await builder.Build().RunAsync();

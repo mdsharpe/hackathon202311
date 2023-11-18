@@ -1,24 +1,22 @@
+using System;
 namespace Shared.Model
 {
     public class GameBoard
     {
-        public GameBoard(Tile[,] tiles)
-        {
-            Tiles = tiles;
-        }
-
-        public Tile[,] Tiles { get; set; } = new Tile[,] { { } };
-        private Tile[] TileTypes { get; set; }
+        public Tile[][] Tiles { get; set; } = Array.Empty<Tile[]>();
+        private Array TileTypes { get; set; }
 
         public void InitializeTiles(int xSize, int ySize)
         {
-            TileTypes = (Tile[])Enum.GetValues(typeof(Tile)).OfType<Tile>().ToArray().Where(tile => tile != Tile.EmptyCell);
+            TileTypes = Enum.GetValues(typeof(Tile));
+            Tiles = new Tile[ySize][];
             for (int rowIndex = 0; rowIndex < ySize; rowIndex++)
             {
+                Tiles[rowIndex] = new Tile[xSize];
                 for (int columnIndex = 0; columnIndex < xSize; columnIndex++)
                 {
                     Tile randomTile = GenerateRandomTile();
-                    Tiles[rowIndex, columnIndex] = randomTile;
+                    Tiles[rowIndex][columnIndex] = randomTile;
                 }
             }
         }

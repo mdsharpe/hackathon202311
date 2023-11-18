@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Server.Services;
 using Shared;
 using Shared.Model;
 
@@ -7,14 +8,17 @@ namespace Server.Hubs;
 public class GameHub : Hub, IGameHub
 {
     private readonly GameBoard _gameBoard;
+    private readonly TileSmasher _tileSmasher;
     private readonly ILogger<GameHub> _logger;
 
     public GameHub(
-        ILogger<GameHub> logger,
-        GameBoard gameBoard)
+        GameBoard gameBoard,
+        TileSmasher tileSmasher,
+        ILogger<GameHub> logger)
     {
-        _gameBoard = gameBoard;
-        _logger = logger;
+        _gameBoard = gameBoard ?? throw new ArgumentNullException(nameof(gameBoard));
+        _tileSmasher = tileSmasher ?? throw new ArgumentNullException(nameof(tileSmasher));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<GameBoard> GetBoard()
@@ -35,13 +39,15 @@ public class GameHub : Hub, IGameHub
         }
 
         // Get relevant tile data
-        var sourceTile = _gameBoard.Tiles[sourceCoordinates.X, sourceCoordinates.Y];
+        var sourceTile = _gameBoard.Tiles[sourceCoordinates.X][sourceCoordinates.Y];
         var targetCoordinates = GetTargetCoordinates(sourceCoordinates, direction);
-        var targetTile = _gameBoard.Tiles[targetCoordinates.X, targetCoordinates.Y];
+        var targetTile = _gameBoard.Tiles[targetCoordinates.X][targetCoordinates.Y];
 
         // Swap tiles
-        _gameBoard.Tiles[sourceCoordinates.X,sourceCoordinates.Y] = targetTile;
-        _gameBoard.Tiles[targetCoordinates.X, targetCoordinates.Y] = sourceTile;
+        _gameBoard.Tiles[sourceCoordinates.X][sourceCoordinates.Y] = targetTile;
+        _gameBoard.Tiles[targetCoordinates.X][targetCoordinates.Y] = sourceTile;
+
+        _tileSmasher.DestoryTilesIfMatched();
 
         await Clients.All.SendAsync(
             nameof(IGameHubClient.OnBoardChanged),
