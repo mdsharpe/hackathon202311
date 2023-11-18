@@ -4,7 +4,7 @@ using Shared.Model;
 
 namespace Server.Hubs;
 
-public class GameHub : Hub
+public class GameHub : Hub, IGameHub
 {
     private readonly GameBoard _gameBoard;
     private readonly ILogger<GameHub> _logger;
@@ -15,6 +15,11 @@ public class GameHub : Hub
     {
         _gameBoard = gameBoard;
         _logger = logger;
+    }
+
+    public async Task<GameBoard> GetBoard()
+    {
+        return _gameBoard;
     }
 
     public async Task MoveTile(Coordinates sourceCoordinates, Direction direction)

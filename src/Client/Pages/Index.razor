@@ -53,6 +53,7 @@ Welcome to your new app.
         _gameBoardSubscription = _signalRClient.OnBoardChanged(board =>
         {
             Board = board;
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(board));
             StateHasChanged();
         });
     }

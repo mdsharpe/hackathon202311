@@ -1,6 +1,4 @@
-﻿using Shared.Model;
-
-namespace Client;
+﻿namespace Client;
 
 public class GameStateWrapper
 {
@@ -26,6 +24,9 @@ public class GameStateWrapper
     private async Task SignalRClient_Opened()
     {
         _gameStateChanged?.Dispose();
+        
+        GameBoard.OnNext(await _signalRClient.GetGameBoard());
+        
         _gameStateChanged = _signalRClient.OnBoardChanged(GameBoard.OnNext);
     }
 
