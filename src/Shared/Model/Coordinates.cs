@@ -1,7 +1,7 @@
 ﻿namespace Shared.Model;
 public class Coordinates
 {
-    int X = 0;
+    public int X = 0;
 
-    int Y = 0;
+    public int Y = 0;
 }
