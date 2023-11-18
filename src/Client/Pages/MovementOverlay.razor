@@ -1,32 +1,51 @@
 ﻿@inject GameSignalRClient _signalRClient
 
+<style>
+    .movement-overlay {
+        width: calc((@TileCssUtil.Width) * 3);
+        height: calc((@TileCssUtil.Height) * 3);
+    }
+</style>
+
 <aside class="movement-overlay" style="bottom: @GetPositionBottom(); left: @GetPositionLeft()">
-    <input type="button" class="movement-overlay__up" value="⬆️" @onclick="async () => await Move(Direction.Up)" />
-    <input type="button" class="movement-overlay__right" value="➡️" @onclick="async () => await Move(Direction.Right)" />
-    <input type="button" class="movement-overlay__down" value="⬇️" @onclick="async () => await Move(Direction.Down)" />
-    <input type="button" class="movement-overlay__left" value="⬅️" @onclick="async () => await Move(Direction.Left)" />
+    <input type="button"
+           class="movement-overlay__button movement-overlay__up"
+           value="⬆️" @onclick="async () => await Move(Direction.Up)" />
+    <input type="button"
+           class="movement-overlay__button movement-overlay__right"
+           value="➡️" @onclick="async () => await Move(Direction.Right)" />
+    <input type="button"
+           class="movement-overlay__button movement-overlay__down"
+           value="⬇️" @onclick="async () => await Move(Direction.Down)" />
+    <input type="button"
+           class="movement-overlay__button movement-overlay__left"
+           value="⬅️" @onclick="async () => await Move(Direction.Left)" />
 </aside>
 
 @code {
     [Parameter]
     public Coordinates SelectedCoordinates { get; set; }
 
+    [Parameter]
+    public EventCallback OnMove { get; set; }
+
     private string GetPositionBottom()
     {
         var tileHeight = TileCssUtil.Height;
         var y = SelectedCoordinates.Y;
-        return $"calc((({tileHeight}) * {y}) - (({tileHeight}) / 2))";
+        return $"calc((({tileHeight}) * {y - 1}))";
     }
 
     private string GetPositionLeft()
     {
         var tileWidth = TileCssUtil.Width;
         var x = SelectedCoordinates.X;
-        return $"calc(({tileWidth}) * {x} - (({tileWidth}) / 2))";
+        return $"calc(({tileWidth}) * {x - 1})";
     }
 
     private async Task Move(Direction direction)
     {
         await _signalRClient.Move(SelectedCoordinates, direction);
+        await OnMove.InvokeAsync();
     }
 }

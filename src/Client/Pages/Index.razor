@@ -27,7 +27,9 @@
                         @GetTileColour(coord)
                         @(GetIsSelected(coord) ? "selected":"")
                                                 ">
-                            <input type="button" class="tile-button" @onclick="() => OnTileClick(coord)" />
+                            <input type="button"
+                                class="tile-button"
+                                @onclick="() => OnTileClick(coord)" />
                         </td>
                     }
                 </tr>
@@ -35,7 +37,8 @@
         </table>
         @if (SelectedTile.Value is not null)
         {
-            <MovementOverlay SelectedCoordinates="SelectedTile.Value ?? default" />
+            <MovementOverlay SelectedCoordinates="SelectedTile.Value ?? default"
+            OnMove="() => SelectedTile.OnNext(null)" />
         }
     }
 </div>
