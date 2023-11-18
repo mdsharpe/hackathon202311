@@ -1,9 +1,17 @@
-﻿.game-board {
+﻿header {
+    text-align: center;
+}
+
+.title-img {
+    width: 55vw;
+}
+
+.game-board {
     background-color: #333333;
     border-collapse: separate;
     border-spacing: 0;
     display: table;
-    height: calc(100vh - 10rem);
+    height: calc(100vh - 10rem - 40px);
     width: calc(100vw - 2rem - 15px);
 }
 
