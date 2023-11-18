@@ -12,7 +12,7 @@
 <header>
     <img src="/images/Shandy-Crush.png" class="title-img" />
 </header>
-<div class="board-container">
+<div class="board-container" @onkeypress="e => OnKeyPress(e)">
     @{
         var board = Board.Value;
     }
@@ -29,10 +29,10 @@
                         @GetTileColour(coord)
                         @(GetIsSelected(coord) ? "selected":"")
                         @(GetIsDestroyed(coord) ? "destroyed":"")
-                                                ">
+                                                                                                                        ">
                             <input type="button"
-                                class="tile-button"
-                                @onclick="() => OnTileClick(coord)" />
+                                   class="tile-button"
+                                   @onclick="() => OnTileClick(coord)" />
                         </td>
                     }
                 </tr>
@@ -40,9 +40,8 @@
         </table>
         @if (SelectedTile.Value is not null)
         {
-            <MovementOverlay
-                SelectedCoordinates="SelectedTile.Value ?? default"
-                OnMove="() => SelectedTile.OnNext(null)" />
+            <MovementOverlay SelectedCoordinates="SelectedTile.Value ?? default"
+                             OnMove="() => SelectedTile.OnNext(null)" />
         }
         @if (board.GetIsGameOver())
         {
@@ -53,10 +52,18 @@
 
 @code {
     private readonly Subject<bool> _disposed = new();
+    private readonly Random _rng = new();
     private IDisposable? _gameBoardSubscription;
+    private readonly Timer _copilotTimer;
 
     public readonly BehaviorSubject<GameBoard?> Board = new(null);
     public readonly BehaviorSubject<Coordinates?> SelectedTile = new(null);
+    public readonly BehaviorSubject<bool> CopilotMode = new(false);
+
+    public Index()
+    {
+        _copilotTimer = new(OnCopilotTimerTick, default, 0, 0);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -78,11 +85,24 @@
 
         await _signalRClient.Start();
 
+        this.CopilotMode.Subscribe(enabled =>
+        {
+            if (enabled)
+            {
+                _copilotTimer.Change(1000, 1000);
+            }
+            else
+            {
+                _copilotTimer.Change(0, 0);
+            }
+        });
+
         await base.OnInitializedAsync();
     }
 
     public void Dispose()
     {
+        _copilotTimer.Dispose();
         _signalRClient.Stop().GetAwaiter().GetResult();
         _disposed.OnNext(true);
         _gameBoardSubscription?.Dispose();
@@ -96,7 +116,7 @@
         Board.Value.Tiles[coordinates.X][coordinates.Y].IsDestroyed &&
         Board.Value.Tiles[coordinates.X][coordinates.Y].TileColour != TileColour.EmptyCell;
 
-    private void OnTileClick(Coordinates coordinates)
+    public void OnTileClick(Coordinates coordinates)
     {
         if (SelectedTile.Value is null || !SelectedTile.Value.Equals(coordinates))
         {
@@ -105,6 +125,14 @@
         else
         {
             SelectedTile.OnNext(null);
+        }
+    }
+
+    public void OnKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "c")
+        {
+            CopilotMode.OnNext(!CopilotMode.Value);
         }
     }
 
@@ -123,5 +151,21 @@
     {
         Board.OnNext(board);
         StateHasChanged();
+    }
+
+    private void OnCopilotTimerTick(object? state)
+    {
+        var board = Board.Value;
+
+        if (board is null)
+        {
+            return;
+        }
+
+        var x = _rng.Next(0, board.Width);
+        var y = _rng.Next(0, board.Height);
+        var coords = new Coordinates(x, y);
+        var dir = (Direction)_rng.Next(0, 4);
+        _signalRClient.Move(coords, dir);
     }
 }
