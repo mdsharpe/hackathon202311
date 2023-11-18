@@ -26,6 +26,7 @@
                         <td id="tile" class="game-tile
                         @GetTileColour(coord)
                         @(GetIsSelected(coord) ? "selected":"")
+                        @(GetIsDestroyed(coord) ? "destroyed":"")
                                                 ">
                             <input type="button"
                                 class="tile-button"
@@ -83,6 +84,9 @@
     public bool GetIsSelected(Coordinates coordinates)
         => SelectedTile.Value?.Equals(coordinates) ?? false;
 
+    public bool GetIsDestroyed(Coordinates coordinates) =>
+        Board.Value is not null && Board.Value.Tiles[coordinates.X][coordinates.Y].IsDestroyed;
+
     private void OnTileClick(Coordinates coordinates)
     {
         if (SelectedTile.Value is null || !SelectedTile.Value.Equals(coordinates))
@@ -103,7 +107,7 @@
         }
 
         var tileType = Board.Value.Tiles[coordinates.X][coordinates.Y];
-        return $"tile-{tileType.ToString()}";
+        return $"tile-{tileType.TileColour.ToString()}";
     }
 
     private void HandleBoardStateReceived(GameBoard? board)

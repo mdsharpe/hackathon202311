@@ -31,7 +31,12 @@
     background-color: transparent;
     border: 0 none;
 }
- 
+
+.destroyed {
+    box-shadow: 0 2px #e9d973;
+    transition: box-shadow 0.5s linear;
+}
+
 .tile-EmptyTile {
     background-color: transparent;
 }

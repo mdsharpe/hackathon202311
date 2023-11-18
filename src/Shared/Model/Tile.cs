@@ -1,14 +1,9 @@
 ﻿namespace Shared.Model
 {
-    public enum Tile
+    public class Tile
     {
-        EmptyCell = 0,
-        RedTile = 1,
-        GreenTile = 2,
-        BlueTile = 3,
-        PinkTile = 4,
-        PurpleTile = 5,
-        YellowTile = 6,
-        LightBlueTile = 7
+        public TileColour TileColour { get; set; } = TileColour.EmptyCell;
+
+        public bool IsDestroyed { get; set; } = false;
     }
 }
