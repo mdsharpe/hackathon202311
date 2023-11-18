@@ -42,9 +42,19 @@ public class GameHub : Hub, IGameHub
         _gameBoard.Tiles[sourceCoordinates.X][sourceCoordinates.Y] = targetTile;
         _gameBoard.Tiles[targetCoordinates.X][targetCoordinates.Y] = sourceTile;
 
-        _tileSmasher.DestoryTilesIfMatched();
-
+        var tilesToDestroy = _tileSmasher.GetMatchedTiles();
+        _tileSmasher.DestroyTiles(tilesToDestroy);
         await UpdateClients();
+
+        var timer = new System.Timers.Timer(500);
+        timer.Elapsed += async (sender, args) =>
+        {
+            _tileSmasher.RemoveDestroyedTiles(tilesToDestroy);
+            await UpdateClients();
+            timer.Stop();
+            timer.Dispose();
+        };
+        timer.Enabled = true;
     }
 
     internal async Task UpdateClients()

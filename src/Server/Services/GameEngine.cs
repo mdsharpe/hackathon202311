@@ -9,16 +9,13 @@ public class GameEngine : BackgroundService
 {
     private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(1000);
     private readonly GameBoard _gameBoard;
-    private readonly GameHub _gameHub;
     private readonly TileSmasher _tileSmasher;
 
     public GameEngine(
         GameBoard gameBoard,
-        GameHub gameHub,
         TileSmasher tileSmasher)
     {
         _gameBoard = gameBoard;
-        _gameHub = gameHub;
         _tileSmasher = tileSmasher;
     }
 
@@ -39,8 +36,6 @@ public class GameEngine : BackgroundService
 
             CleanUpDestroyedTiles();
 
-            await _gameHub.UpdateClients();
-
             await taskDelay;
         }
     }
@@ -60,7 +55,7 @@ public class GameEngine : BackgroundService
                 }
             }
 
-            _tileSmasher.DestoryTilesIfMatched();
+            _tileSmasher.GetMatchedTiles();
             CleanUpDestroyedTiles();
         }
         while (_gameBoard.Tiles.Any(tc => tc.Any(t => t.TileColour == TileColour.EmptyCell)));

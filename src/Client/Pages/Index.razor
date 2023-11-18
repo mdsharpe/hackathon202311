@@ -85,7 +85,9 @@
         => SelectedTile.Value?.Equals(coordinates) ?? false;
 
     public bool GetIsDestroyed(Coordinates coordinates) =>
-        Board.Value is not null && Board.Value.Tiles[coordinates.X][coordinates.Y].IsDestroyed;
+        Board.Value is not null &&
+        Board.Value.Tiles[coordinates.X][coordinates.Y].IsDestroyed &&
+        Board.Value.Tiles[coordinates.X][coordinates.Y].TileColour != TileColour.EmptyCell;
 
     private void OnTileClick(Coordinates coordinates)
     {

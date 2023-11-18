@@ -33,8 +33,9 @@
 }
 
 .destroyed {
-    box-shadow: 0 2px #e9d973;
-    transition: box-shadow 0.5s linear;
+    border: none;
+    box-shadow: 0 3px #e9d973;
+    transition: box-shadow 1s linear;
 }
 
 .tile-EmptyTile {

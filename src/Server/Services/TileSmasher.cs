@@ -1,4 +1,5 @@
-﻿using Shared.Model;
+﻿using Server.Hubs;
+using Shared.Model;
 
 namespace Server.Services;
 
@@ -20,7 +21,7 @@ public class TileSmasher
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public void DestoryTilesIfMatched()
+    public List<Coordinates> GetMatchedTiles()
     {
         var tilesToDestroy = new List<Coordinates>();
 
@@ -32,7 +33,26 @@ public class TileSmasher
         _logger.LogInformation("Checking columns");
         tilesToDestroy.AddRange(CheckDimension(checkRows: false));
 
-        DestroyTiles(tilesToDestroy);
+        return tilesToDestroy;
+    }
+
+    public void DestroyTiles(List<Coordinates> tilesToDestroy)
+    {
+        foreach (var tile in tilesToDestroy)
+        {
+            _logger.LogInformation($"Destroying tile at ({tile.X}, {tile.Y})");
+            _gameBoard.Tiles[tile.X][tile.Y].IsDestroyed = true;
+        }
+    }
+
+    public void RemoveDestroyedTiles(List<Coordinates> tilesToDestroy)
+    {
+        foreach (var tile in tilesToDestroy)
+        {
+            _logger.LogInformation($"Removing tile at ({tile.X}, {tile.Y})");
+            _gameBoard.Tiles[tile.X][tile.Y].TileColour = TileColour.EmptyCell;
+            _gameBoard.Tiles[tile.X][tile.Y].IsDestroyed = false;
+        }
     }
 
     /// <summary>
@@ -54,8 +74,15 @@ public class TileSmasher
 
             for (var b = 0; b < GetDimensionLength(getRowLength: !checkRows); b++)
             {
+                var newColour = _gameBoard.Tiles[GetRow(checkRows, a, b)][GetColumn(checkRows, a, b)].TileColour;
+                if (newColour == TileColour.EmptyCell)
+                {
+                    // We don't need to delete any empty cells, they're not new matches
+                    continue;
+                }
+
                 // If we're checking columns, we are iterating along each row here, & vice versa
-                if (_gameBoard.Tiles[GetRow(checkRows, a, b)][GetColumn(checkRows, a, b)].TileColour == matchedTileColour)
+                if (newColour == matchedTileColour)
                 {
                     matchedTilesCounter++;
                     if (matchedTilesCounter < _minimumNumberMatches)
@@ -107,28 +134,4 @@ public class TileSmasher
 
     private static int GetColumn(bool getRow, int indexDimensionA, int indexDimensionB)
         => getRow ? indexDimensionB : indexDimensionA;
-
-    private void DestroyTiles(List<Coordinates> tilesToDestroy)
-    {
-        foreach(var tile in tilesToDestroy)
-        {
-            _logger.LogInformation($"Destorying tile at ({tile.X}, {tile.Y})");
-            _gameBoard.Tiles[tile.X][tile.Y].IsDestroyed = true;
-        }
-
-        ////RemoveDestroyedTiles(tilesToDestroy);
-    }
-
-    private void RemoveDestroyedTiles(List<Coordinates> tilesToDestroy)
-    {
-        var timer = new System.Timers.Timer(500);
-        timer.Elapsed += (sender, args) =>
-        {
-            foreach (var tile in tilesToDestroy)
-            {
-                _gameBoard.Tiles[tile.X][tile.Y].TileColour = TileColour.EmptyCell;
-                _gameBoard.Tiles[tile.X][tile.Y].IsDestroyed = false;
-            }
-        };
-    }
 }
