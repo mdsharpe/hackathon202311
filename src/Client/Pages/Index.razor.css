@@ -12,7 +12,7 @@
 }
 
 .game-tile {
-    border: 1px solid transparent;
+    border: 1pt solid transparent;
     border-radius: 5px;
     display: inline-block;
     background-repeat: no-repeat;
@@ -31,7 +31,12 @@
     background-color: transparent;
     border: 0 none;
 }
- 
+
+.destroyed {
+    box-shadow: 0 2px #e9d973;
+    transition: box-shadow 0.5s linear;
+}
+
 .tile-EmptyTile {
     visibility: hidden;
     transition: color 2s linear;

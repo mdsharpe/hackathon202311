@@ -116,5 +116,20 @@ public class TileSmasher
             _logger.LogInformation($"Destorying tile at ({tile.X}, {tile.Y})");
             _gameBoard.Tiles[tile.X][tile.Y].IsDestroyed = true;
         }
+
+        ////RemoveDestroyedTiles(tilesToDestroy);
+    }
+
+    private void RemoveDestroyedTiles(List<Coordinates> tilesToDestroy)
+    {
+        var timer = new System.Timers.Timer(500);
+        timer.Elapsed += (sender, args) =>
+        {
+            foreach (var tile in tilesToDestroy)
+            {
+                _gameBoard.Tiles[tile.X][tile.Y].TileColour = TileColour.EmptyCell;
+                _gameBoard.Tiles[tile.X][tile.Y].IsDestroyed = false;
+            }
+        };
     }
 }

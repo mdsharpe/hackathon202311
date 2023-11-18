@@ -49,9 +49,17 @@ public class GameHub : Hub, IGameHub
 
         _tileSmasher.DestoryTilesIfMatched();
 
-        await Clients.All.SendAsync(
-            nameof(IGameHubClient.OnBoardChanged),
-            _gameBoard);
+        await UpdateClients();
+    }
+
+    internal async Task UpdateClients()
+    {
+        if (_gameBoard is not null && Clients is not null)
+        {
+            await Clients.All.SendAsync(
+                nameof(IGameHubClient.OnBoardChanged),
+                _gameBoard);
+        }
     }
 
     private void DiscardInvalidMoves(Coordinates coordinates, Direction direction)
