@@ -18,11 +18,11 @@
     background-attachment: local;
     background-size: auto;
     background-position: center;
-    border: solid 1px black;
+    border: solid 3px black;
 }
 
 .game-tile.selected {
-    box-shadow: rgba(255,255,255,1) 0 0 5px inset;
+    border: solid 3px white;
 }
 
 .tile-button {
