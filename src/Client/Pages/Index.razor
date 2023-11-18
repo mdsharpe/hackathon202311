@@ -44,8 +44,12 @@
             <tr>
                 @for (var x = 0; x < Board.Width; x++)
                 {
-                    <td id="tile" class="game-tile @GetTileColour(x, y)">
-                        <input type="button" class="tile-button" @onclick="() => OnTileClick(x, y)" />
+                    var coord = new Coordinates(x, y);
+                    <td id="tile" class="game-tile
+                        @GetTileColour(coord)
+                        @(GetIsSelected(coord) ? "selected":"")
+                        ">
+                        <input type="button" class="tile-button" @onclick="() => OnTileClick(coord)" />
                     </td>
                 }
             </tr>
@@ -56,7 +60,7 @@
 
 @code {
     private readonly Subject<bool> _disposed = new();
-    private IDisposable _gameBoardSubscription = default!;
+    private IDisposable? _gameBoardSubscription;
     public string name = "Christopher";
     private int rows = GlobalConstants.ySize;
     private int cols = GlobalConstants.xSize;
@@ -88,13 +92,14 @@
         _gameBoardSubscription?.Dispose();
     }
 
-    private void OnTileClick(int x, int y)
-    {
-        var coord = new Coordinates(x, y);
+    public bool GetIsSelected(Coordinates coordinates)
+        => SelectedTile.Value?.Equals(coordinates) ?? false;
 
-        if (SelectedTile.Value is null || SelectedTile.Value.Equals(coord))
+    private void OnTileClick(Coordinates coordinates)
+    {
+        if (SelectedTile.Value is null || !SelectedTile.Value.Equals(coordinates))
         {
-            SelectedTile.OnNext(new Coordinates(x, y));
+            SelectedTile.OnNext(coordinates);
         }
         else
         {
@@ -102,14 +107,14 @@
         }
     }
 
-    private string GetTileColour(int x, int y)
+    private string GetTileColour(Coordinates coordinates)
     {
         if (Board is null)
         {
             return "tile-BlueTile";
         }
 
-        var tileType = Board.Tiles[x][y];
+        var tileType = Board.Tiles[coordinates.X][coordinates.Y];
         return $"tile-{tileType.ToString()}";
     }
 }
