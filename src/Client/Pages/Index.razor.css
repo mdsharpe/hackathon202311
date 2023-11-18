@@ -32,10 +32,18 @@
     border: 0 none;
 }
 
-.destroyed {
-    border: none;
-    box-shadow: 0 3px #e9d973;
-    transition: box-shadow 1s linear;
+.game-tile.selected.destroyed, .game-tile.destroyed {
+    animation: glow 0.25s infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        border-color: #e9d973;
+    }
+
+    to {
+        border-color: #a99943;
+    }
 }
 
 .tile-EmptyTile {

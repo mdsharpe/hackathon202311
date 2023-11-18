@@ -7,7 +7,7 @@ namespace Server.Services;
 public class GameLogic
 {
     private const int MinimumNumberMatches = 3;
-    private static readonly TimeSpan DestroyDelay = TimeSpan.FromMilliseconds(500);
+    private static readonly TimeSpan DestroyDelay = TimeSpan.FromMilliseconds(1500);
 
     private readonly ILogger<GameLogic> _logger;
     private readonly ISystemClock _clock;
@@ -121,6 +121,7 @@ public class GameLogic
                 var newColour = _board.Tiles[GetRow(checkRows, a, b)][GetColumn(checkRows, a, b)].TileColour;
                 if (newColour == TileColour.EmptyCell)
                 {
+                    matchedTileColour = newColour;
                     // We don't need to delete any empty cells, they're not new matches
                     continue;
                 }
