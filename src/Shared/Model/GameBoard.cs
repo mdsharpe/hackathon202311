@@ -11,9 +11,9 @@ public class GameBoard
 
     public bool GetIsGameOver()
         => (from tile in EnumerateAll()
+            where tile.TileColour != TileColour.EmptyCell
             group tile by tile.TileColour into tileGroup
             let count = tileGroup.Count()
-            where count < 3
-            select tileGroup.Key)
-        .Any();
+            select new { Colour = tileGroup.Key, Tiles = count })
+        .All(o => o.Tiles < 3);
 }
