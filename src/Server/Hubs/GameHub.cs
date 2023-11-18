@@ -26,7 +26,7 @@ public class GameHub : Hub, IGameHub
         return _gameBoard;
     }
 
-    public async Task MoveTile(Coordinates sourceCoordinates, Direction direction)
+    public async Task Move(Coordinates sourceCoordinates, Direction direction)
     {
         try
         {

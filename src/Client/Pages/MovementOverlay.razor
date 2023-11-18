@@ -1,32 +1,32 @@
-﻿
-<aside class="movement-overlay"
-       style="top: @GetPositionTop(); left: @GetPositionLeft()">
-    <input type="button" class="movement-overlay__up" />
-    <input type="button" class="movement-overlay__right" />
-    <input type="button" class="movement-overlay__down" />
-    <input type="button" class="movement-overlay__left" />
+﻿@inject GameSignalRClient _signalRClient
+
+<aside class="movement-overlay" style="bottom: @GetPositionBottom(); left: @GetPositionLeft()">
+    <input type="button" class="movement-overlay__up" value="⬆️" @onclick="async () => await Move(Direction.Up)" />
+    <input type="button" class="movement-overlay__right" value="➡️" @onclick="async () => await Move(Direction.Right)" />
+    <input type="button" class="movement-overlay__down" value="⬇️" @onclick="async () => await Move(Direction.Down)" />
+    <input type="button" class="movement-overlay__left" value="⬅️" @onclick="async () => await Move(Direction.Left)" />
 </aside>
 
 @code {
-    private readonly int rows = GlobalConstants.ySize;
-    private readonly int cols = GlobalConstants.xSize;
-
     [Parameter]
     public Coordinates SelectedCoordinates { get; set; }
 
-    private string GetPositionTop()
+    private string GetPositionBottom()
     {
-        ///        height: calc((100vh - 4rem - 10px) / @rows);
-
-        var y = SelectedCoordinates.Y * 100;
-        var top = 100 - y;
-        return $"{top}vh";
+        var tileHeight = TileCssUtil.Height;
+        var y = SelectedCoordinates.Y;
+        return $"calc((({tileHeight}) * {y}) - (({tileHeight}) / 2))";
     }
 
     private string GetPositionLeft()
     {
-        ///        width: calc((100vw - 2rem - 30px) / @cols);
-        ///        
-        return $"{SelectedCoordinates.X * 100}px";
+        var tileWidth = TileCssUtil.Width;
+        var x = SelectedCoordinates.X;
+        return $"calc(({tileWidth}) * {x} - (({tileWidth}) / 2))";
+    }
+
+    private async Task Move(Direction direction)
+    {
+        await _signalRClient.Move(SelectedCoordinates, direction);
     }
 }
