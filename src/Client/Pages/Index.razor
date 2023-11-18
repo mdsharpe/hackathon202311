@@ -3,32 +3,37 @@
 
 <PageTitle>Index</PageTitle>
 <style>
-  .game-board {
-    background-color: #333333;
-    border-collapse: separate;
-    border-spacing: 5px 5px;
-    display:table;
-    height: calc(100vh - 4rem - 10px);
-    width: calc(100vw - 2rem - 15px);
-  }
-  .game-tile {
-    border-radius: 5px;
-    display: inline-block;
-    height: calc((100vh - 4rem - 10px) / @rows);
-    width: calc((100vw - 2rem - 30px) / @cols);
-  }
-  .tile-EmptyTile {
-    visibility: hidden;
-  }
-  .tile-RedTile {
-    background-color: #c62234;
-  }
-  .tile-GreenTile {
-    background-color: #34a622;
-  }
-  .tile-BlueTile {
-    background-color: #1234e6;
-  }
+    .game-board {
+        background-color: #333333;
+        border-collapse: separate;
+        border-spacing: 5px 5px;
+        display: table;
+        height: calc(100vh - 4rem - 10px);
+        width: calc(100vw - 2rem - 15px);
+    }
+
+    .game-tile {
+        border-radius: 5px;
+        display: inline-block;
+        height: calc((100vh - 4rem - 10px) / @rows);
+        width: calc((100vw - 2rem - 30px) / @cols);
+    }
+
+    .tile-EmptyTile {
+        visibility: hidden;
+    }
+
+    .tile-RedTile {
+        background-color: #c62234;
+    }
+
+    .tile-GreenTile {
+        background-color: #34a622;
+    }
+
+    .tile-BlueTile {
+        background-color: #1234e6;
+    }
 </style>
 
 @if (Board is not null)
@@ -39,9 +44,7 @@
             <tr>
                 @for (var x = 0; x < Board.Width; x++)
                 {
-                    <td id="tile" class="game-tile @GetTileColour(new Coordinates(x, y))
-                    ">
-                        &nbsp;
+                    <td id="tile" class="game-tile @GetTileColour(x, y)">
                         <input type="button" class="tile-button" @onclick="() => OnTileClick(x, y)" />
                     </td>
                 }
@@ -59,6 +62,7 @@
     private int cols = GlobalConstants.xSize;
 
     public GameBoard? Board { get; set; }
+    public readonly BehaviorSubject<Coordinates?> SelectedTile = new(null);
 
     protected override async Task OnInitializedAsync()
     {
@@ -86,15 +90,26 @@
 
     private void OnTileClick(int x, int y)
     {
+        var coord = new Coordinates(x, y);
+
+        if (SelectedTile.Value is null || SelectedTile.Value.Equals(coord))
+        {
+            SelectedTile.OnNext(new Coordinates(x, y));
+        }
+        else
+        {
+            SelectedTile.OnNext(null);
+        }
     }
 
-    private string GetTileColour(Coordinates coordinates) {
+    private string GetTileColour(int x, int y)
+    {
         if (Board is null)
         {
             return "tile-BlueTile";
         }
 
-        var tileType = Board.Tiles[coordinates.X][coordinates.Y];
+        var tileType = Board.Tiles[x][y];
         return $"tile-{tileType.ToString()}";
     }
 }
