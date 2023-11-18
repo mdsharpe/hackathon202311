@@ -46,11 +46,13 @@ Welcome to your new app.
     private int rows = 15;
     private int cols = 10;
 
+    public GameBoard? Board { get; set; }
+
     protected override void OnInitialized()
     {
         _gameBoardSubscription = _signalRClient.OnBoardChanged(board =>
         {
-            // TODO update board
+            Board = board;
             StateHasChanged();
         });
     }
