@@ -3,11 +3,6 @@ namespace Shared.Model
 {
     public class GameBoard
     {
-        public GameBoard(Tile[,] tiles)
-        {
-            Tiles = tiles;
-        }
-
         public Tile[][] Tiles { get; set; } = Array.Empty<Tile[]>();
         private Array TileTypes { get; set; }
 
