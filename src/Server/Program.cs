@@ -14,9 +14,7 @@ builder.Services
 builder.Services
     .AddSignalR(configure =>
     {
-#if DEBUG
         configure.EnableDetailedErrors = true;
-#endif
     });
 
 var app = builder.Build();
@@ -28,7 +26,6 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Error");
     app.UseHttpsRedirection();
 }
 
