@@ -2,37 +2,11 @@
 @inject GameSignalRClient _signalRClient
 
 <PageTitle>Index</PageTitle>
+
 <style>
-    .game-board {
-        background-color: #333333;
-        border-collapse: separate;
-        border-spacing: 5px 5px;
-        display: table;
-        height: calc(100vh - 4rem - 10px);
-        width: calc(100vw - 2rem - 15px);
-    }
-
     .game-tile {
-        border-radius: 5px;
-        display: inline-block;
-        height: calc((100vh - 4rem - 10px) / @rows);
-        width: calc((100vw - 2rem - 30px) / @cols);
-    }
-
-    .tile-EmptyTile {
-        visibility: hidden;
-    }
-
-    .tile-RedTile {
-        background-color: #c62234;
-    }
-
-    .tile-GreenTile {
-        background-color: #34a622;
-    }
-
-    .tile-BlueTile {
-        background-color: #1234e6;
+        height: calc((100vh - 10rem) / @rows);
+        width: calc((100vw - 2rem - 80px) / @cols);
     }
 </style>
 
