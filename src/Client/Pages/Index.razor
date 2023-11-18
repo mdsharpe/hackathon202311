@@ -1,15 +1,47 @@
 ﻿@page "/"
 
 <PageTitle>Index</PageTitle>
+<style>
+  .game-board {
+    display:table;
+    background-color: #333333;
+  }
+  .game-tile {
+    height: 3rem;
+    width: 3rem;
+    border: 1pt solid #e3c245;
+    border-radius: 5px;
+    background-image: url('/icon-192.png');
+    background-size: 3rem;
+    display: inline-block;
+    border-spacing: 1px;
+  }
+</style>
 
 <h1>Hello, @name</h1>
+
+<table id="game-board" class="game-board">
+  @for (var rowNum = 0; rowNum < rows; rowNum++)
+  {
+    <tr>
+      @for (var colNum = 0; colNum < cols; colNum++)
+      {
+        <td id="tile" class="game-tile">
+          &nbsp;
+        </td>
+      }
+    </tr>
+  }
+</table>
 
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 
 @code {
-    public string name = "Hi Chris";
+    public string name = "Christopher";
+    private int rows = 15;
+    private int cols = 10;
 
     protected override void OnInitialized()
     {
