@@ -48,7 +48,7 @@ Welcome to your new app.
 
     protected override void OnInitialized()
     {
-        _gameBoardSubscription = _signalRClient.OnBoardChanged(balanceChange =>
+        _gameBoardSubscription = _signalRClient.OnBoardChanged(board =>
         {
             // TODO update board
             StateHasChanged();
