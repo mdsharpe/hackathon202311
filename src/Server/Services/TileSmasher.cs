@@ -79,7 +79,6 @@ public class TileSmasher
                 }
                 else
                 {
-                    _logger.LogInformation("No match found");
                     matchedTilesCounter = 1; // It matches with itself, so we have 1 match
                     matchedTile = _gameBoard.Tiles[
                         GetRow(checkRows, a, b)][

@@ -56,9 +56,8 @@ public class GameHub : Hub, IGameHub
             return false;
         }
 
-        if (coordinates.X == _gameBoard.Tiles.Length && direction == Direction.Right)
+        if (coordinates.X == _gameBoard.Width - 1 && direction == Direction.Right)
         {
-            // Assume all rows are the same length
             return false;
         }
 
@@ -67,9 +66,8 @@ public class GameHub : Hub, IGameHub
             return false;
         }
 
-        if (coordinates.Y == _gameBoard.Tiles[0].Length && direction == Direction.Up)
+        if (coordinates.Y == _gameBoard.Height - 1 && direction == Direction.Up)
         {
-            // Assume all columns are the same length
             return false;
         }
 
