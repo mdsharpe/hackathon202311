@@ -13,10 +13,10 @@ public class GameBoard
         {
             TileTypes = (Tile[])Enum.GetValues(typeof(Tile)).OfType<Tile>().Where(tile => tile != Tile.EmptyCell);
             Tiles = new Tile[ySize][];
-            for (int rowIndex = 0; rowIndex < ySize; rowIndex++)
+            for (int rowIndex = 0; rowIndex < xSize; rowIndex++)
             {
                 Tiles[rowIndex] = new Tile[xSize];
-                for (int columnIndex = 0; columnIndex < xSize; columnIndex++)
+                for (int columnIndex = 0; columnIndex < ySize; columnIndex++)
                 {
                     Tile randomTile = GenerateRandomTile();
                     Tiles[rowIndex][columnIndex] = randomTile;
