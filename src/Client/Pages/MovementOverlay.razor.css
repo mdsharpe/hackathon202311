@@ -1,8 +1,40 @@
-﻿.movement-overlay
-{
+﻿.movement-overlay {
     position: absolute;
     display: block;
-    width: 20vw;
-    height: 20vh;
-    border: solid 1px white;
+    pointer-events: none;
+}
+
+.movement-overlay__button {
+    width: 30%;
+    height: 30%;
+    position: absolute;
+    pointer-events: all;
+    background: transparent;
+    border: 0 none;
+    border-radius: 20px;
+    font-size: xx-large;
+}
+
+.movement-overlay__up {
+    bottom: 66.666%;
+    left: 35%;
+    box-shadow: rgba(0,0,0,.8) 0 -10px 15px;
+}
+
+.movement-overlay__right {
+    left: 66.666%;
+    top: 35%;
+    box-shadow: rgba(0,0,0,.8) 10px 0 15px;
+}
+
+.movement-overlay__down {
+    top: 66.666%;
+    left: 35%;
+    box-shadow: rgba(0,0,0,.8) 0 10px 15px;
+}
+
+.movement-overlay__left {
+    right: 66.666%;
+    top: 35%;   
+    box-shadow: rgba(0,0,0,.8) -10px 0 15px;
 }

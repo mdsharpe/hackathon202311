@@ -1,7 +1,7 @@
 ﻿.game-board {
     background-color: #333333;
     border-collapse: separate;
-    border-spacing: 5px 5px;
+    border-spacing: 0;
     display: table;
     height: calc(100vh - 10rem);
     width: calc(100vw - 2rem - 15px);
@@ -12,17 +12,17 @@
 }
 
 .game-tile {
-    border: 1px solid transparent;
     border-radius: 5px;
     display: inline-block;
     background-repeat: no-repeat;
     background-attachment: local;
     background-size: auto;
     background-position: center;
+    border: solid 1px black;
 }
 
 .game-tile.selected {
-    border-color: #fff;
+    box-shadow: rgba(255,255,255,1) 0 0 5px inset;
 }
 
 .tile-button {
