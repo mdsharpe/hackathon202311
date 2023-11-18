@@ -8,7 +8,7 @@ namespace Shared.Model
 
         public void InitializeTiles(int xSize, int ySize)
         {
-            TileTypes = Enum.GetValues(typeof(Tile));
+            TileTypes = (Tile[])Enum.GetValues(typeof(Tile)).OfType<Tile>().Where(tile => tile != Tile.EmptyCell);
             Tiles = new Tile[ySize][];
             for (int rowIndex = 0; rowIndex < ySize; rowIndex++)
             {
