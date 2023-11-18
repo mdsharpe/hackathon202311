@@ -33,7 +33,7 @@
 }
  
 .tile-EmptyTile {
-    visibility: hidden;
+    background-color: transparent;
     transition: background-color 2s linear;
 }
 
