@@ -30,8 +30,6 @@
   }
 </style>
 
-<!-- Hello, @name -->
-
 <table id="game-board" class="game-board">
   @for (var rowNum = 0; rowNum < rows; rowNum++)
   {
@@ -40,21 +38,20 @@
       {
         <td id="tile" class="game-tile @GetTileColour(new Coordinates(colNum, rowNum))">
           &nbsp;
+          <input type="button" class="tile-button" @onclick="OnTileClick" />
         </td>
       }
     </tr>
   }
 </table>
-
-@* <button @onclick="UpdateBoard">Update board</button> *@
+<MovementOverlay />
 
 @code {
     private readonly Subject<bool> _disposed = new();
     private IDisposable _gameBoardSubscription;
-    public string name = "Christopher";
     private int rows = 15;
     private int cols = 10;
-
+    
     public GameBoard? Board { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -79,6 +76,11 @@
         _signalRClient.Stop().GetAwaiter().GetResult();
         _disposed.OnNext(true);
         _gameBoardSubscription?.Dispose();
+    }
+
+    private void OnTileClick()
+    {
+        
     }
 
     private string GetTileColour(Coordinates coordinates) {
