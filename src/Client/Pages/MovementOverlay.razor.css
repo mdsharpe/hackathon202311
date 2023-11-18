@@ -1,0 +1,8 @@
+﻿.movement-overlay
+{
+    position: absolute;
+    display: block;
+    width: 20vw;
+    height: 20vw;
+    border: solid 1px white;
+}

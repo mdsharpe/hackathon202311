@@ -1,5 +1,6 @@
 ﻿
-<aside class="movement-overlay">
+<aside class="movement-overlay"
+       style="top: @GetPositionTop(); left: @GetPositionLeft()">
     <input type="button" class="movement-overlay__up" />
     <input type="button" class="movement-overlay__right" />
     <input type="button" class="movement-overlay__down" />
@@ -7,5 +8,25 @@
 </aside>
 
 @code {
+    private readonly int rows = GlobalConstants.ySize;
+    private readonly int cols = GlobalConstants.xSize;
 
+    [Parameter]
+    public Coordinates SelectedCoordinates { get; set; }
+
+    private string GetPositionTop()
+    {
+        ///        height: calc((100vh - 4rem - 10px) / @rows);
+
+        var y = SelectedCoordinates.Y * 100;
+        var top = 100 - y;
+        return $"{top}vh";
+    }
+
+    private string GetPositionLeft()
+    {
+        ///        width: calc((100vw - 2rem - 30px) / @cols);
+        ///        
+        return $"{SelectedCoordinates.X * 100}px";
+    }
 }

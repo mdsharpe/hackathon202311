@@ -7,6 +7,10 @@
     width: calc(100vw - 2rem - 15px);
 }
 
+.board-container {
+    position: relative;
+}
+
 .game-tile {
     border: 1px solid transparent;
     border-radius: 5px;

@@ -10,27 +10,32 @@
     }
 </style>
 
-@if (Board is not null)
-{
-    <table id="game-board" class="game-board">
-        @for (var y = Board.Height - 1; y >= 0; y--)
-        {
-            <tr>
-                @for (var x = 0; x < Board.Width; x++)
-                {
-                    var coord = new Coordinates(x, y);
-                    <td id="tile" class="game-tile
+<div class="board-container">
+    @if (Board is not null)
+    {
+        <table id="game-board" class="game-board">
+            @for (var y = Board.Height - 1; y >= 0; y--)
+            {
+                <tr>
+                    @for (var x = 0; x < Board.Width; x++)
+                    {
+                        var coord = new Coordinates(x, y);
+                        <td id="tile" class="game-tile
                         @GetTileColour(coord)
                         @(GetIsSelected(coord) ? "selected":"")
-                        ">
-                        <input type="button" class="tile-button" @onclick="() => OnTileClick(coord)" />
-                    </td>
-                }
-            </tr>
+                                    ">
+                            <input type="button" class="tile-button" @onclick="() => OnTileClick(coord)" />
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+        @if (SelectedTile.Value is not null)
+        {
+            <MovementOverlay SelectedCoordinates="SelectedTile.Value ?? default" />
         }
-    </table>
-    <MovementOverlay />
-}
+    }
+</div>
 
 @code {
     private readonly Subject<bool> _disposed = new();
