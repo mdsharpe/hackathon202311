@@ -12,7 +12,6 @@ public abstract class SignalRClientBase
         HubConnection = new HubConnectionBuilder()
             .WithUrl(navigationManager.ToAbsoluteUri(hubPath))
             .WithAutomaticReconnect()
-            ////.AddMessagePackProtocol()
             .Build();
 
         HubConnection.Closed += async (arg) =>

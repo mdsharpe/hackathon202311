@@ -1,6 +1,4 @@
-﻿using MessagePack;
-using MessagePack.Resolvers;
-using Server.Hubs;
+﻿using Server.Hubs;
 using Server.Services;
 using Shared.Model;
 
@@ -17,13 +15,7 @@ builder.Services
 #if DEBUG
         configure.EnableDetailedErrors = true;
 #endif
-        ////configure.SupportedProtocols.Remove("json");
     });
-    ////.AddMessagePackProtocol(options =>
-    ////{
-    ////    options.SerializerOptions = MessagePackSerializerOptions.Standard
-    ////        .WithSecurity(MessagePackSecurity.UntrustedData);
-    ////});
 
 var app = builder.Build();
 
