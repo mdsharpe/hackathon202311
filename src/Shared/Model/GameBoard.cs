@@ -36,4 +36,13 @@ public class GameBoard
         TileColour randomTile = TileColourTypes[randomIndex];
         return randomTile;
     }
+
+    public bool GetIsGameOver()
+        => (from row in Tiles
+            from tile in row
+            group tile by tile into tileGroup
+            let count = tileGroup.Count()
+            where count > 2
+            select tileGroup.Key)
+        .Any();
 }
