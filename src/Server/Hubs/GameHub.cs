@@ -4,7 +4,7 @@ using Shared.Model;
 
 namespace Server.Hubs;
 
-public class GameHub : Hub<IGameHub>
+public class GameHub : Hub
 {
     private readonly GameBoard _gameBoard;
     private readonly ILogger<GameHub> _logger;
@@ -30,7 +30,9 @@ public class GameHub : Hub<IGameHub>
 
         // TODO move tile in game board
 
-        await Clients.All.OnBoardChanged(_gameBoard);
+        await Clients.All.SendAsync(
+            nameof(IGameHubClient.OnBoardChanged),
+            _gameBoard);
     }
 
     private void DiscardInvalidMoves(int x, int y, Direction direction)

@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject GameSignalRClient _signalRClient
 
 <PageTitle>Index</PageTitle>
 <style>
@@ -39,15 +40,24 @@ Welcome to your new app.
 <SurveyPrompt Title="How is Blazor working for you?" />
 
 @code {
+    private readonly Subject<bool> _disposed = new();
+    private IDisposable _gameBoardSubscription;
     public string name = "Christopher";
     private int rows = 15;
     private int cols = 10;
 
     protected override void OnInitialized()
     {
+        _gameBoardSubscription = _signalRClient.OnBoardChanged(balanceChange =>
+        {
+            // TODO update board
+            StateHasChanged();
+        });
     }
 
     public void Dispose()
     {
+        _disposed.OnNext(true);
+        _gameBoardSubscription?.Dispose();
     }
 }
