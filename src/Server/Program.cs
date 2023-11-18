@@ -1,4 +1,6 @@
-﻿using Server.Hubs;
+﻿using MessagePack;
+using MessagePack.Resolvers;
+using Server.Hubs;
 using Server.Services;
 using Shared.Model;
 
@@ -9,12 +11,19 @@ builder.Services
     .AddHostedService<GameEngine>()
     .AddSingleton<GameBoard>();
 
-builder.Services.AddSignalR(configure =>
-{
+builder.Services
+    .AddSignalR(configure =>
+    {
 #if DEBUG
-    configure.EnableDetailedErrors = true;
+        configure.EnableDetailedErrors = true;
 #endif
-}).AddMessagePackProtocol();
+        ////configure.SupportedProtocols.Remove("json");
+    });
+    ////.AddMessagePackProtocol(options =>
+    ////{
+    ////    options.SerializerOptions = MessagePackSerializerOptions.Standard
+    ////        .WithSecurity(MessagePackSecurity.UntrustedData);
+    ////});
 
 var app = builder.Build();
 

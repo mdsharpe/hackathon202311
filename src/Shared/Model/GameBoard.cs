@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 namespace Shared.Model
 {
     public class GameBoard
@@ -8,7 +8,7 @@ namespace Shared.Model
             Tiles = tiles;
         }
 
-        public Tile[,] Tiles { get; set; } = new Tile[,] { { } };
+        public Tile[][] Tiles { get; set; } = Array.Empty<Tile[]>();
         private Array TileTypes { get; set; }
 
         public void InitializeTiles(int xSize, int ySize)
@@ -19,7 +19,7 @@ namespace Shared.Model
                 for (int columnIndex = 0; columnIndex < xSize; columnIndex++)
                 {
                     Tile randomTile = GenerateRandomTile();
-                    Tiles[rowIndex, columnIndex] = randomTile;
+                    Tiles[rowIndex][columnIndex] = randomTile;
                 }
             }
         }

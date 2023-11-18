@@ -35,13 +35,13 @@ public class GameHub : Hub, IGameHub
         }
 
         // Get relevant tile data
-        var sourceTile = _gameBoard.Tiles[sourceCoordinates.X, sourceCoordinates.Y];
+        var sourceTile = _gameBoard.Tiles[sourceCoordinates.X][sourceCoordinates.Y];
         var targetCoordinates = GetTargetCoordinates(sourceCoordinates, direction);
-        var targetTile = _gameBoard.Tiles[targetCoordinates.X, targetCoordinates.Y];
+        var targetTile = _gameBoard.Tiles[targetCoordinates.X][targetCoordinates.Y];
 
         // Swap tiles
-        _gameBoard.Tiles[sourceCoordinates.X,sourceCoordinates.Y] = targetTile;
-        _gameBoard.Tiles[targetCoordinates.X, targetCoordinates.Y] = sourceTile;
+        _gameBoard.Tiles[sourceCoordinates.X][sourceCoordinates.Y] = targetTile;
+        _gameBoard.Tiles[targetCoordinates.X][targetCoordinates.Y] = sourceTile;
 
         await Clients.All.SendAsync(
             nameof(IGameHubClient.OnBoardChanged),

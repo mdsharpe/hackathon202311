@@ -48,7 +48,7 @@ Welcome to your new app.
 
     public GameBoard? Board { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _gameBoardSubscription = _signalRClient.OnBoardChanged(board =>
         {
@@ -56,10 +56,18 @@ Welcome to your new app.
             Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(board));
             StateHasChanged();
         });
+
+        await _signalRClient.Start();
+
+        Board = await _signalRClient.GetGameBoard();
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(Board));
+
+        await base.OnInitializedAsync();
     }
 
     public void Dispose()
     {
+        _signalRClient.Stop().GetAwaiter().GetResult();
         _disposed.OnNext(true);
         _gameBoardSubscription?.Dispose();
     }
