@@ -7,11 +7,10 @@ public class GameBoard
     public int Height => Tiles.Select(o => o.Length).DefaultIfEmpty().Max();
     public int Width => Tiles.Length;
 
-    public bool HasTiles() => Tiles.Any(t => t.Any());
+    public IEnumerable<Tile> EnumerateAll() => Tiles.SelectMany(o => o);
 
     public bool GetIsGameOver()
-        => (from row in Tiles
-            from tile in row
+        => (from tile in EnumerateAll()
             group tile by tile into tileGroup
             let count = tileGroup.Count()
             where count < 1000

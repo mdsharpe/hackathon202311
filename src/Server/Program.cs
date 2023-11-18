@@ -11,7 +11,8 @@ builder.Services
     .AddSingleton<GameBoard>()
     .AddSingleton<GameHub>()
     .AddSingleton<GameLogic>()
-    .AddSingleton<ISystemClock, SystemClock>();
+    .AddSingleton<ISystemClock, SystemClock>()
+    .AddSingleton<ReaderWriterLockSlim>();
 
 builder.Services
     .AddSignalR(configure =>

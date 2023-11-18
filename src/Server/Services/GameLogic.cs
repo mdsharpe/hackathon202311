@@ -64,9 +64,6 @@ public class GameLogic
         while (_board.Tiles.SelectMany(t => t).Any(t => t.TileColour == TileColour.EmptyCell));
     }
 
-    public TileColour GenerateRandomTileColour()
-        => TileColourTypes[_rng.Next(0, TileColourTypes.Length)];
-
     public void MarkDestroyedTiles()
     {
         var tilesToDestroy = CheckDimension(checkRows: true)
@@ -166,6 +163,9 @@ public class GameLogic
 
         return confirmedTilesToDestroyForDimension;
     }
+
+    private TileColour GenerateRandomTileColour()
+        => TileColourTypes[_rng.Next(0, TileColourTypes.Length)];
 
     private int GetDimensionLength(bool getRowLength)
     {
