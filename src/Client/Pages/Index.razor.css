@@ -15,6 +15,10 @@
     border: 1px solid transparent;
     border-radius: 5px;
     display: inline-block;
+    background-repeat: no-repeat;
+    background-attachment: local;
+    background-size: auto;
+    background-position: center;
 }
 
 .game-tile.selected {
@@ -30,31 +34,39 @@
  
 .tile-EmptyTile {
     visibility: hidden;
+    transition: color 2s linear;
 }
 
 .tile-RedTile {
     background-color: #c62234;
+    background-image: url(/images/beer-mug.svg);
 }
 
 .tile-GreenTile {
     background-color: #34a622;
+    background-image: url(/images/cocktail-glass.svg);
 }
 
 .tile-BlueTile {
     background-color: #1234e6;
+    background-image: url(/images/bottle-with-popping-cork.svg);
 }
 .tile-PinkTile {
     background-color: #e375d9;
+    background-image: url(/images/baby-bottle.svg);
 }
 
 .tile-PurpleTile {
     background-color: #731193;
+    background-image: url(/images/wine-glass.svg);
 }
 
 .tile-YellowTile {
     background-color: #e9d973;
+    background-image: url(/images/coffee-drink-spilled-spilt-thirst.svg);
 }
 
 .tile-LightBlueTile {
     background-color: #82d9FB;
+    background-image: url(/images/tropical-drink.svg);
 }

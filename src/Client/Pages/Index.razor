@@ -11,19 +11,22 @@
 </style>
 
 <div class="board-container">
-    @if (Board is not null)
+    @{
+        var board = Board.Value;
+    }
+    @if (board is not null)
     {
         <table id="game-board" class="game-board">
-            @for (var y = Board.Height - 1; y >= 0; y--)
+            @for (var y = board.Height - 1; y >= 0; y--)
             {
                 <tr>
-                    @for (var x = 0; x < Board.Width; x++)
+                    @for (var x = 0; x < board.Width; x++)
                     {
                         var coord = new Coordinates(x, y);
                         <td id="tile" class="game-tile
                         @GetTileColour(coord)
                         @(GetIsSelected(coord) ? "selected":"")
-                                    ">
+                                                ">
                             <input type="button" class="tile-button" @onclick="() => OnTileClick(coord)" />
                         </td>
                     }
@@ -40,24 +43,29 @@
 @code {
     private readonly Subject<bool> _disposed = new();
     private IDisposable? _gameBoardSubscription;
-    public string name = "Christopher";
 
-    public GameBoard? Board { get; set; }
+    public readonly BehaviorSubject<GameBoard?> Board = new(null);
     public readonly BehaviorSubject<Coordinates?> SelectedTile = new(null);
 
     protected override async Task OnInitializedAsync()
     {
         _gameBoardSubscription = _signalRClient.OnBoardChanged(board =>
         {
-            Board = board;
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(board));
-            StateHasChanged();
+            HandleBoardStateReceived(board);
         });
 
-        await _signalRClient.Start();
+        _signalRClient.Opened += async () =>
+        {
+            HandleBoardStateReceived(await _signalRClient.GetGameBoard());
+        };
 
-        Board = await _signalRClient.GetGameBoard();
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(Board));
+        _signalRClient.Closed += (_) =>
+        {
+            HandleBoardStateReceived(null);
+            return Task.CompletedTask;
+        };
+
+        await _signalRClient.Start();
 
         await base.OnInitializedAsync();
     }
@@ -86,12 +94,18 @@
 
     private string GetTileColour(Coordinates coordinates)
     {
-        if (Board is null)
+        if (Board.Value is null)
         {
             return "tile-EmptyTile";
         }
 
-        var tileType = Board.Tiles[coordinates.X][coordinates.Y];
+        var tileType = Board.Value.Tiles[coordinates.X][coordinates.Y];
         return $"tile-{tileType.ToString()}";
+    }
+
+    private void HandleBoardStateReceived(GameBoard? board)
+    {
+        Board.OnNext(board);
+        StateHasChanged();
     }
 }
