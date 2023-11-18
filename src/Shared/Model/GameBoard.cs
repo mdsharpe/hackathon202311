@@ -1,4 +1,3 @@
-using System;
 namespace Shared.Model
 {
     public class GameBoard
@@ -9,11 +8,11 @@ namespace Shared.Model
         }
 
         public Tile[,] Tiles { get; set; } = new Tile[,] { { } };
-        private Array TileTypes { get; set; }
+        private Tile[] TileTypes { get; set; }
 
         public void InitializeTiles(int xSize, int ySize)
         {
-            TileTypes = Enum.GetValues(typeof(Tile));
+            TileTypes = (Tile[])Enum.GetValues(typeof(Tile)).OfType<Tile>().ToArray().Where(tile => tile != Tile.EmptyCell);
             for (int rowIndex = 0; rowIndex < ySize; rowIndex++)
             {
                 for (int columnIndex = 0; columnIndex < xSize; columnIndex++)
