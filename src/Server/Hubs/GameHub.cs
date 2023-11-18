@@ -21,20 +21,15 @@ public class GameHub : Hub, IGameHub
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<GameBoard> GetBoard()
+    public Task<GameBoard> GetBoard()
     {
-        return _gameBoard;
+        return Task.FromResult(_gameBoard);
     }
 
     public async Task Move(Coordinates sourceCoordinates, Direction direction)
     {
-        try
+        if (!GetIsMoveValid(sourceCoordinates, direction))
         {
-            DiscardInvalidMoves(sourceCoordinates, direction);
-        }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogInformation(ex.Message);
             return;
         }
 
@@ -54,29 +49,31 @@ public class GameHub : Hub, IGameHub
             _gameBoard);
     }
 
-    private void DiscardInvalidMoves(Coordinates coordinates, Direction direction)
+    private bool GetIsMoveValid(Coordinates coordinates, Direction direction)
     {
         if (coordinates.X == 0 && direction == Direction.Left)
         {
-            throw new InvalidOperationException($"Can't move {nameof(direction)}");
+            return false;
         }
 
         if (coordinates.X == _gameBoard.Tiles.Length && direction == Direction.Right)
         {
             // Assume all rows are the same length
-            throw new InvalidOperationException($"Can't move {nameof(direction)}");
+            return false;
         }
 
         if (coordinates.Y == 0 && direction == Direction.Down)
         {
-            throw new InvalidOperationException($"Can't move {nameof(direction)}");
+            return false;
         }
 
         if (coordinates.Y == _gameBoard.Tiles[0].Length && direction == Direction.Up)
         {
             // Assume all columns are the same length
-            throw new InvalidOperationException($"Can't move {nameof(direction)}");
+            return false;
         }
+
+        return true;
     }
 
     private Coordinates GetTargetCoordinates(Coordinates sourceCoordinates, Direction direction)
@@ -85,7 +82,7 @@ public class GameHub : Hub, IGameHub
         {
             return new Coordinates(sourceCoordinates.X, sourceCoordinates.Y + 1);
         }
-        else if(direction == Direction.Down)
+        else if (direction == Direction.Down)
         {
             return new Coordinates(sourceCoordinates.X, sourceCoordinates.Y - 1);
         }
