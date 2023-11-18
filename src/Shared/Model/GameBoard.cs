@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Shared.Model;
 
@@ -11,11 +11,11 @@ public class GameBoard
         public int Width => Tiles.Length;
         public void InitializeTiles(int xSize, int ySize)
         {
-            TileTypes = (Tile[])Enum.GetValues(typeof(Tile)).OfType<Tile>().Where(tile => tile != Tile.EmptyCell);
-            Tiles = new Tile[ySize][];
+            TileTypes = Enum.GetValues(typeof(Tile)).OfType<Tile>().Where(tile => tile != Tile.EmptyCell).ToArray();
+            Tiles = new Tile[xSize][];
             for (int rowIndex = 0; rowIndex < xSize; rowIndex++)
             {
-                Tiles[rowIndex] = new Tile[xSize];
+                Tiles[rowIndex] = new Tile[ySize];
                 for (int columnIndex = 0; columnIndex < ySize; columnIndex++)
                 {
                     Tile randomTile = GenerateRandomTile();

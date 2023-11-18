@@ -23,7 +23,7 @@ public class GameEngine : BackgroundService
             if (_gameBoard.Tiles.Length == 0)
             {
                 int xSize = GlobalConstants.xSize;
-                int ySize = GlobalConstants.ySize; ;
+                int ySize = GlobalConstants.ySize;
                 _gameBoard.InitializeTiles(xSize,ySize);
             }
 
