@@ -1,5 +1,5 @@
 @echo off
 wt ^
--d "%~dp0\src\Server" powershell -NoExit -Command dotnet watch run
+-d "%~dp0\" powershell -NoExit -Command dotnet watch -p .\src\Server run
 
 exit
