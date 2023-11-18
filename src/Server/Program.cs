@@ -12,7 +12,7 @@ builder.Services
     .AddSingleton<GameHub>()
     .AddSingleton<GameLogic>()
     .AddSingleton<ISystemClock, SystemClock>()
-    .AddSingleton<ReaderWriterLockSlim>();
+    .AddSingleton<DirtyTracker>();
 
 builder.Services
     .AddSignalR(configure =>

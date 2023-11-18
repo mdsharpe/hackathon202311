@@ -24,12 +24,12 @@
                 <tr>
                     @for (var x = 0; x < board.Width; x++)
                     {
+                        var tile = board.Tiles[x][y];
                         var coord = new Coordinates(x, y);
                         <td id="tile" class="game-tile
-                        @GetTileColour(coord)
-                        @(GetIsSelected(coord) ? "selected":"")
-                        @(GetIsDestroyed(coord) ? "destroyed":"")
-                                                                                                                        ">
+                            @GetTileColourCssClass(tile)
+                            @(GetIsSelected(coord) ? "selected":"")
+                            @(tile.GetIsDestroyed() ? "destroyed":"")">
                             <input type="button"
                                    class="tile-button"
                                    @onclick="() => OnTileClick(coord)" />
@@ -41,7 +41,7 @@
         @if (SelectedTile.Value is not null)
         {
             <MovementOverlay SelectedCoordinates="SelectedTile.Value ?? default"
-                             OnMove="() => SelectedTile.OnNext(null)" />
+                             OnMoved="() => SelectedTile.OnNext(null)" />
         }
         @if (board.GetIsGameOver())
         {
@@ -111,11 +111,6 @@
     public bool GetIsSelected(Coordinates coordinates)
         => SelectedTile.Value?.Equals(coordinates) ?? false;
 
-    public bool GetIsDestroyed(Coordinates coordinates) =>
-        Board.Value is not null &&
-        Board.Value.Tiles[coordinates.X][coordinates.Y].IsDestroyed &&
-        Board.Value.Tiles[coordinates.X][coordinates.Y].TileColour != TileColour.EmptyCell;
-
     public void OnTileClick(Coordinates coordinates)
     {
         if (SelectedTile.Value is null || !SelectedTile.Value.Equals(coordinates))
@@ -136,15 +131,9 @@
         }
     }
 
-    private string GetTileColour(Coordinates coordinates)
+    private string GetTileColourCssClass(Tile tile)
     {
-        if (Board.Value is null)
-        {
-            return "tile-EmptyTile";
-        }
-
-        var tileType = Board.Value.Tiles[coordinates.X][coordinates.Y];
-        return $"tile-{tileType.TileColour.ToString()}";
+        return $"tile-{tile.TileColour.ToString()}";
     }
 
     private void HandleBoardStateReceived(GameBoard? board)

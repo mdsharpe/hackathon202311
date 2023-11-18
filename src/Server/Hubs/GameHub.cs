@@ -9,21 +9,21 @@ public class GameHub : Hub, IGameHub
 {
     private readonly GameBoard _board;
     private readonly GameLogic _logic;
-    private readonly ReaderWriterLockSlim _locker;
+    private readonly DirtyTracker _dirtyTracker;
 
     public GameHub(
         GameBoard board,
         GameLogic logic,
-        ReaderWriterLockSlim locker)
+        DirtyTracker dirtyTracker)
     {
         _board = board;
         _logic = logic;
-        _locker = locker;
+        _dirtyTracker = dirtyTracker;
     }
 
     public Task<GameBoard> GetBoard()
     {
-        _locker.EnterReadLock();
+        _dirtyTracker.EnterReadLock();
 
         try
         {
@@ -31,46 +31,48 @@ public class GameHub : Hub, IGameHub
         }
         finally
         {
-            _locker.ExitReadLock();
+            _dirtyTracker.ExitReadLock();
         }
     }
 
-    public async Task StartNewGame()
+    public Task StartNewGame()
     {
-        _locker.EnterWriteLock();
+        _dirtyTracker.EnterWriteLock();
 
         try
         {
             _logic.Init();
-            await PushBoardToClients();
+            _dirtyTracker.MarkAsDirty();
         }
         finally
         {
-            _locker.ExitWriteLock();
+            _dirtyTracker.ExitWriteLock();
         }
+
+        return Task.CompletedTask;
     }
 
-    public async Task Move(Coordinates sourceCoordinates, Direction direction)
+    public Task Move(Coordinates sourceCoordinates, Direction direction)
     {
-        _locker.EnterUpgradeableReadLock();
+        if (!GetIsMoveValid(sourceCoordinates, direction))
+        {
+            return Task.CompletedTask;
+        }
+
+        _dirtyTracker.EnterUpgradeableReadLock();
 
         try
         {
-            if (!GetIsMoveValid(sourceCoordinates, direction))
-            {
-                return;
-            }
-
             var sourceTile = _board.Tiles[sourceCoordinates.X][sourceCoordinates.Y];
             var targetCoordinates = GetTargetCoordinates(sourceCoordinates, direction);
             var targetTile = _board.Tiles[targetCoordinates.X][targetCoordinates.Y];
 
-            if (sourceTile.IsDestroyed || targetTile.IsDestroyed)
+            if (sourceTile.GetIsDestroyed() || targetTile.GetIsDestroyed())
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            _locker.EnterWriteLock();
+            _dirtyTracker.EnterWriteLock();
 
             try
             {
@@ -78,23 +80,19 @@ public class GameHub : Hub, IGameHub
                 _board.Tiles[targetCoordinates.X][targetCoordinates.Y] = sourceTile;
 
                 _logic.MarkDestroyedTiles();
-
-                await PushBoardToClients();
+                _dirtyTracker.MarkAsDirty();
             }
             finally
             {
-                _locker.ExitWriteLock();
+                _dirtyTracker.ExitWriteLock();
             }
         }
         finally
         {
-            _locker.ExitUpgradeableReadLock();
+            _dirtyTracker.ExitUpgradeableReadLock();
         }
-    }
 
-    private async Task PushBoardToClients()
-    {
-        await Clients.All.PushBoard(_board);
+        return Task.CompletedTask;
     }
 
     private bool GetIsMoveValid(Coordinates coordinates, Direction direction)

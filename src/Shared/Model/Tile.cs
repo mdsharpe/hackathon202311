@@ -6,5 +6,5 @@ public class Tile
 
     public DateTimeOffset? DestroyedAt { get; set; }
 
-    public bool IsDestroyed => DestroyedAt.HasValue;
+    public bool GetIsDestroyed() => DestroyedAt.HasValue;
 }

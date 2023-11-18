@@ -59,7 +59,8 @@ public class GameLogic
             }
 
             MarkDestroyedTiles();
-            CleanUpDestroyedTiles(immediate: true);
+            var destroyedTiles = GetDestroyedTilesToCleanUp(skipDelay: true);
+            CleanUpDestroyedTiles(destroyedTiles);
         }
         while (_board.Tiles.SelectMany(t => t).Any(t => t.TileColour == TileColour.EmptyCell));
     }
@@ -75,24 +76,18 @@ public class GameLogic
         }
     }
 
-    public void CleanUpDestroyedTiles(bool immediate = false)
-    {
-        while (_board.Tiles.Any(tc => tc.Any(t => t.IsDestroyed)))
-        {
-            for (var rowIndex = 0; rowIndex < _board.Tiles.Length; rowIndex++)
-            {
-                for (var colIndex = 0; colIndex < _board.Tiles[0].Length; colIndex++)
-                {
-                    var tile = _board.Tiles[rowIndex][colIndex];
+    public Tile[] GetDestroyedTilesToCleanUp(bool skipDelay = false)
+        => _board.EnumerateAll()
+            .Where(o => o.GetIsDestroyed())
+            .Where(o => skipDelay || _clock.UtcNow.Subtract(o.DestroyedAt!.Value) > DestroyDelay)
+            .ToArray();
 
-                    if (tile.IsDestroyed
-                        && (immediate || _clock.UtcNow.Subtract(tile.DestroyedAt!.Value) > DestroyDelay))
-                    {
-                        _board.Tiles[rowIndex][colIndex].TileColour = TileColour.EmptyCell;
-                        _board.Tiles[rowIndex][colIndex].DestroyedAt = null;
-                    }
-                }
-            }
+    public void CleanUpDestroyedTiles(IEnumerable<Tile> tiles)
+    {
+        foreach (var tile in tiles)
+        {
+            tile.TileColour = TileColour.EmptyCell;
+            tile.DestroyedAt = null;
         }
     }
 

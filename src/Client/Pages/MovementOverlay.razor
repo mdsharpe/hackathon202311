@@ -27,7 +27,7 @@
     public Coordinates SelectedCoordinates { get; set; }
 
     [Parameter]
-    public EventCallback OnMove { get; set; }
+    public EventCallback OnMoved { get; set; }
 
     private string GetPositionBottom()
     {
@@ -46,6 +46,6 @@
     private async Task Move(Direction direction)
     {
         await _signalRClient.Move(SelectedCoordinates, direction);
-        await OnMove.InvokeAsync();
+        await OnMoved.InvokeAsync();
     }
 }
