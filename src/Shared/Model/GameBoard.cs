@@ -8,7 +8,7 @@ namespace Shared.Model
             Tiles = tiles;
         }
 
-        Tile[,] Tiles { get; set; }
+        public Tile[,] Tiles { get; set; } = new Tile[,] { { } };
         private Array TileTypes { get; set; }
 
         public void InitializeTiles(int xSize, int ySize)

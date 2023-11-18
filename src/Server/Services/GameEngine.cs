@@ -20,6 +20,12 @@ public class GameEngine : BackgroundService
             var taskDelay = Task.Delay(Interval, stoppingToken);
 
             // TODO here, do stuff we want to do the board e.g. create new tiles
+            if (_gameBoard.Tiles.Length == 0)
+            {
+                int xSize = 10;
+                int ySize = 15;
+                _gameBoard.InitializeTiles(xSize, ySize);
+            } 
 
             await taskDelay;
         }
