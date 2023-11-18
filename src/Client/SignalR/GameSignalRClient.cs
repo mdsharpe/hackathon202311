@@ -22,6 +22,11 @@ public class GameSignalRClient
         await HubConnection.InvokeAsync(nameof(IGameHub.Move), coordinates, direction);
     }
 
+    public async Task StartNewGame()
+    {
+        await HubConnection.InvokeAsync(nameof(IGameHub.StartNewGame));
+    }
+
     public IDisposable OnBoardChanged(Action<GameBoard> action)
         => HubConnection.On(nameof(OnBoardChanged), action);
 }

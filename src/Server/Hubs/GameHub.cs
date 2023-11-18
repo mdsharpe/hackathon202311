@@ -7,23 +7,29 @@ namespace Server.Hubs;
 
 public class GameHub : Hub, IGameHub
 {
-    private readonly GameBoard _gameBoard;
-    private readonly TileSmasher _tileSmasher;
+    private readonly GameBoard _board;
+    private readonly GameLogic _logic;
     private readonly ILogger<GameHub> _logger;
 
     public GameHub(
-        GameBoard gameBoard,
-        TileSmasher tileSmasher,
+        GameBoard board,
+        GameLogic logic,
         ILogger<GameHub> logger)
     {
-        _gameBoard = gameBoard ?? throw new ArgumentNullException(nameof(gameBoard));
-        _tileSmasher = tileSmasher ?? throw new ArgumentNullException(nameof(tileSmasher));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _board = board;
+        _logic = logic;
+        _logger = logger;
     }
 
     public Task<GameBoard> GetBoard()
     {
-        return Task.FromResult(_gameBoard);
+        return Task.FromResult(_board);
+    }
+
+    public async Task StartNewGame()
+    {
+        _logic.Init();
+        await UpdateClients();
     }
 
     public async Task Move(Coordinates sourceCoordinates, Direction direction)
@@ -34,36 +40,26 @@ public class GameHub : Hub, IGameHub
         }
 
         // Get relevant tile data
-        var sourceTile = _gameBoard.Tiles[sourceCoordinates.X][sourceCoordinates.Y];
+        var sourceTile = _board.Tiles[sourceCoordinates.X][sourceCoordinates.Y];
         var targetCoordinates = GetTargetCoordinates(sourceCoordinates, direction);
-        var targetTile = _gameBoard.Tiles[targetCoordinates.X][targetCoordinates.Y];
+        var targetTile = _board.Tiles[targetCoordinates.X][targetCoordinates.Y];
 
         // Swap tiles
-        _gameBoard.Tiles[sourceCoordinates.X][sourceCoordinates.Y] = targetTile;
-        _gameBoard.Tiles[targetCoordinates.X][targetCoordinates.Y] = sourceTile;
+        _board.Tiles[sourceCoordinates.X][sourceCoordinates.Y] = targetTile;
+        _board.Tiles[targetCoordinates.X][targetCoordinates.Y] = sourceTile;
 
-        var tilesToDestroy = _tileSmasher.GetMatchedTiles();
-        _tileSmasher.DestroyTiles(tilesToDestroy);
+        _logic.MarkDestroyedTiles();
+
         await UpdateClients();
-
-        var timer = new System.Timers.Timer(500);
-        timer.Elapsed += async (sender, args) =>
-        {
-            _tileSmasher.RemoveDestroyedTiles(tilesToDestroy);
-            await UpdateClients();
-            timer.Stop();
-            timer.Dispose();
-        };
-        timer.Enabled = true;
     }
 
-    internal async Task UpdateClients()
+    public async Task UpdateClients()
     {
-        if (_gameBoard is not null && Clients is not null)
+        if (Clients is not null)
         {
             await Clients.All.SendAsync(
                 nameof(IGameHubClient.OnBoardChanged),
-                _gameBoard);
+                _board);
         }
     }
 
@@ -74,7 +70,7 @@ public class GameHub : Hub, IGameHub
             return false;
         }
 
-        if (coordinates.X == _gameBoard.Width - 1 && direction == Direction.Right)
+        if (coordinates.X == _board.Width - 1 && direction == Direction.Right)
         {
             return false;
         }
@@ -84,7 +80,7 @@ public class GameHub : Hub, IGameHub
             return false;
         }
 
-        if (coordinates.Y == _gameBoard.Height - 1 && direction == Direction.Up)
+        if (coordinates.Y == _board.Height - 1 && direction == Direction.Up)
         {
             return false;
         }

@@ -1,0 +1,16 @@
+﻿@inject GameSignalRClient _signalRClient
+
+<aside class="game-over-overlay">
+    <h1>Game over</h1>
+    <input type="button"
+        class="reboot-button" 
+        value="Start new game"
+        @onclick="async () => await StartNewGame()"/>
+</aside>
+
+@code {
+    public async Task StartNewGame()
+    {
+        await _signalRClient.StartNewGame();
+    }
+}

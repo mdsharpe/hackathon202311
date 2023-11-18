@@ -1,4 +1,5 @@
-﻿using Server.Hubs;
+﻿using Microsoft.Extensions.Internal;
+using Server.Hubs;
 using Server.Services;
 using Shared.Model;
 
@@ -9,7 +10,8 @@ builder.Services
     .AddHostedService<GameEngine>()
     .AddSingleton<GameBoard>()
     .AddSingleton<GameHub>()
-    .AddSingleton<TileSmasher>();
+    .AddSingleton<GameLogic>()
+    .AddSingleton<ISystemClock, SystemClock>();
 
 builder.Services
     .AddSignalR(configure =>

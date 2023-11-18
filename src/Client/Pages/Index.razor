@@ -41,6 +41,10 @@
             <MovementOverlay SelectedCoordinates="SelectedTile.Value ?? default"
             OnMove="() => SelectedTile.OnNext(null)" />
         }
+        @if (board.GetIsGameOver())
+        {
+            <GameOverOverlay />
+        }
     }
 </div>
 
