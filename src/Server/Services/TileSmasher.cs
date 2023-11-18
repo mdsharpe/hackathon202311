@@ -54,9 +54,7 @@ public class TileSmasher
             for (var b = 0; b < _gameBoard.Tiles.GetLength(dimensionB); b++)
             {
                 // If we're checking columns, we are iterating along each row here; & vice versa
-                if (_gameBoard.Tiles[
-                    GetRow(checkRows, a, b),
-                    GetColumn(checkRows, a, b)] == matchedTile)
+                if (_gameBoard.Tiles[GetRow(checkRows, a, b)][GetColumn(checkRows, a, b)] == matchedTile)
                 {
                     matchedTilesCounter++;
                     if (matchedTilesCounter < _minimumNumberMatches)
@@ -83,7 +81,7 @@ public class TileSmasher
                     _logger.LogInformation("No match found");
                     matchedTilesCounter = 1; // It matches with itself, so we have 1 match
                     matchedTile = _gameBoard.Tiles[
-                        GetRow(checkRows, a, b),
+                        GetRow(checkRows, a, b)][
                         GetColumn(checkRows, a, b)];
                     potentialTilesToDestroy = new List<Coordinates>() 
                     {
@@ -109,7 +107,7 @@ public class TileSmasher
         foreach(var tile in tilesToDestroy)
         {
             _logger.LogInformation($"Destorying tile at ({tile.X}, {tile.Y})");
-            _gameBoard.Tiles[tile.X, tile.Y] = Tile.EmptyCell;
+            _gameBoard.Tiles[tile.X][tile.Y] = Tile.EmptyCell;
         }
     }
 }
