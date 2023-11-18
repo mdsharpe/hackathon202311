@@ -40,7 +40,7 @@ public class GameHub : Hub<IGameHub>
             throw new InvalidOperationException($"Can't move {nameof(direction)}");
         }
 
-        if (x == _gameBoard.Tiles.First().Count && direction == Direction.Right)
+        if (x == _gameBoard.Tiles.GetLength(0) && direction == Direction.Right)
         {
             // Assume all rows are the same length
             throw new InvalidOperationException($"Can't move {nameof(direction)}");
@@ -51,8 +51,9 @@ public class GameHub : Hub<IGameHub>
             throw new InvalidOperationException($"Can't move {nameof(direction)}");
         }
 
-        if (y == _gameBoard.Tiles.Count && direction == Direction.Up)
+        if (y == _gameBoard.Tiles.GetLength(1) && direction == Direction.Up)
         {
+            // Assume all columns are the same length
             throw new InvalidOperationException($"Can't move {nameof(direction)}");
         }
     }

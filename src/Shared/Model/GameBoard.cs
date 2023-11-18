@@ -2,9 +2,9 @@
 
 public class GameBoard
 {
-    public GameBoard()
+    GameBoard() 
     {
     }
 
-    public List<List<Tile>> Tiles { get; set; } = new List<List<Tile>>();
+    public Tile[,] Tiles { get; set; } = new Tile[,] { { } };
 }
