@@ -8,14 +8,25 @@
     background-color: #333333;
   }
   .game-tile {
+    background-size: 3rem;
+    border-radius: 5px;
+    border-spacing: 5px;
+    padding: 5px;
+    display: inline-block;
     height: 3rem;
     width: 3rem;
-    border: 1pt solid #e3c245;
-    border-radius: 5px;
-    background-image: url('/icon-192.png');
-    background-size: 3rem;
-    display: inline-block;
-    border-spacing: 1px;
+  }
+  .tile-EmptyTile {
+    visibility: hidden;
+  }
+  .tile-RedTile {
+    background-color: #c62234;
+  }
+  .tile-GreenTile {
+    background-color: #34a622;
+  }
+  .tile-BlueTile {
+    background-color: #1234e6;
   }
 </style>
 
@@ -27,7 +38,7 @@
     <tr>
       @for (var colNum = 0; colNum < cols; colNum++)
       {
-        <td id="tile" class="game-tile">
+        <td id="tile" class="game-tile @GetTileColour(new Coordinates(colNum, rowNum))">
           &nbsp;
         </td>
       }
@@ -37,7 +48,7 @@
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@* <button @onclick="UpdateBoard">Update board</button> *@
 
 @code {
     private readonly Subject<bool> _disposed = new();
@@ -70,5 +81,15 @@ Welcome to your new app.
         _signalRClient.Stop().GetAwaiter().GetResult();
         _disposed.OnNext(true);
         _gameBoardSubscription?.Dispose();
+    }
+
+    private string GetTileColour(Coordinates coordinates) {
+        if (Board is null)
+        {
+            return "tile-BlueTile";
+        }
+
+        var tileType = Board.Tiles[coordinates.Y][coordinates.X];
+        return $"tile-{tileType.ToString()}";
     }
 }
