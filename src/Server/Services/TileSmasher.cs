@@ -37,13 +37,9 @@ public class TileSmasher
 
     private List<Coordinates> CheckDimension(bool checkRows)
     {
-        // Rows correspond to "0", columns to "1"
-        var dimensionA = checkRows ? 0 : 1;
-        var dimensionB = checkRows ? 1 : 0;
-
         var confirmedTilesToDestroyForDimension = new List<Coordinates>();
 
-        for (var a = 0; a < _gameBoard.Tiles.GetLength(dimensionA); a++)
+        for (var a = 0; a < GetDimensionLength(getRowLength: checkRows); a++)
         {
             // If we're checking rows, we are iterating along each column here, & vice versa
             // We need to reset once we start a new row/column
@@ -51,7 +47,7 @@ public class TileSmasher
             var matchedTilesCounter = 0;
             var potentialTilesToDestroy = new List<Coordinates>();
 
-            for (var b = 0; b < _gameBoard.Tiles.GetLength(dimensionB); b++)
+            for (var b = 0; b < GetDimensionLength(getRowLength: !checkRows); b++)
             {
                 // If we're checking columns, we are iterating along each row here; & vice versa
                 if (_gameBoard.Tiles[GetRow(checkRows, a, b)][GetColumn(checkRows, a, b)] == matchedTile)
@@ -83,7 +79,7 @@ public class TileSmasher
                     matchedTile = _gameBoard.Tiles[
                         GetRow(checkRows, a, b)][
                         GetColumn(checkRows, a, b)];
-                    potentialTilesToDestroy = new List<Coordinates>() 
+                    potentialTilesToDestroy = new List<Coordinates>()
                     {
                         new Coordinates(
                             GetRow(checkRows, a, b),
@@ -94,6 +90,12 @@ public class TileSmasher
         }
 
         return confirmedTilesToDestroyForDimension;
+    }
+
+    private int GetDimensionLength(bool getRowLength)
+    {
+        // Assume all rows and columns are the same respective lengths
+        return getRowLength ? _gameBoard.Tiles.Length : _gameBoard.Tiles[0].Length;
     }
 
     private static int GetRow(bool getRow, int indexDimensionA, int indexDimensionB)

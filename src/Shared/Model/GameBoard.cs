@@ -24,7 +24,7 @@ public class GameBoard
         }
     }
 
-    private Tile GenerateRandomTile()
+    public Tile GenerateRandomTile()
     {
         Random rnd = new Random();
         int randomIndex = rnd.Next(0, TileTypes.Length);
