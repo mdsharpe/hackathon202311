@@ -34,15 +34,15 @@
 @if (Board is not null)
 {
     <table id="game-board" class="game-board">
-        @for (var rowNum = 0; rowNum < rows; rowNum++)
+        @for (var y = Board.Height - 1; y >= 0; y--)
         {
             <tr>
-                @for (var colNum = 0; colNum < cols; colNum++)
+                @for (var x = 0; x < Board.Width; x++)
                 {
-                    <td id="tile" class="game-tile @GetTileColour(new Coordinates(colNum, rowNum))
+                    <td id="tile" class="game-tile @GetTileColour(new Coordinates(x, y))
                     ">
                         &nbsp;
-                        <input type="button" class="tile-button" @onclick="() => OnTileClick(colNum, rowNum)" />
+                        <input type="button" class="tile-button" @onclick="() => OnTileClick(x, y)" />
                     </td>
                 }
             </tr>
@@ -94,7 +94,7 @@
             return "tile-BlueTile";
         }
 
-        var tileType = Board.Tiles[coordinates.Y][coordinates.X];
+        var tileType = Board.Tiles[coordinates.X][coordinates.Y];
         return $"tile-{tileType.ToString()}";
     }
 }
