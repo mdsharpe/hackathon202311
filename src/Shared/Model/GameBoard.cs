@@ -1,12 +1,10 @@
-﻿namespace Shared.Model
-{
-    public class GameBoard
-    {
-        public GameBoard(List<List<Tile>> tiles)
-        {
-            Tiles = tiles;
-        }
+﻿namespace Shared.Model;
 
-        List<List<Tile>> Tiles { get; set; }
+public class GameBoard
+{
+    public GameBoard()
+    {
     }
+
+    public List<List<Tile>> Tiles { get; set; } = new List<List<Tile>>();
 }
