@@ -1,4 +1,6 @@
-using Microsoft.AspNetCore.ResponseCompression;
+﻿using Microsoft.AspNetCore.ResponseCompression;
+using Server.Services;
+using Shared.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services
+    .AddHostedService<GameEngine>()
+    .AddSingleton<GameBoard>();
 
 var app = builder.Build();
 

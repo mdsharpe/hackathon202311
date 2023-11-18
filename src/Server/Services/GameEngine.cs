@@ -6,11 +6,11 @@ namespace Server.Services;
 public class GameEngine : BackgroundService
 {
     private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(1000);
-    private readonly GameState _gameState;
+    private readonly GameBoard _gameBoard;
 
-    public GameEngine(GameState gameState)
+    public GameEngine(GameBoard gameState)
     {
-        _gameState = gameState;
+        _gameBoard = gameState;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
