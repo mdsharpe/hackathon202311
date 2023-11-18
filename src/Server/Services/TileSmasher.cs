@@ -48,14 +48,14 @@ public class TileSmasher
         {
             // If we're checking rows, we are iterating along each column here, & vice versa
             // We need to reset once we start iterating over a new row/column
-            var matchedTile = Tile.EmptyCell; // Default
+            var matchedTileColour = TileColour.EmptyCell; // Default
             var matchedTilesCounter = 0;
             var potentialTilesToDestroy = new List<Coordinates>();
 
             for (var b = 0; b < GetDimensionLength(getRowLength: !checkRows); b++)
             {
                 // If we're checking columns, we are iterating along each row here, & vice versa
-                if (_gameBoard.Tiles[GetRow(checkRows, a, b)][GetColumn(checkRows, a, b)] == matchedTile)
+                if (_gameBoard.Tiles[GetRow(checkRows, a, b)][GetColumn(checkRows, a, b)].TileColour == matchedTileColour)
                 {
                     matchedTilesCounter++;
                     if (matchedTilesCounter < _minimumNumberMatches)
@@ -81,9 +81,9 @@ public class TileSmasher
                 {
                     _logger.LogInformation("No match found");
                     matchedTilesCounter = 1; // It matches with itself, so we have 1 match
-                    matchedTile = _gameBoard.Tiles[
+                    matchedTileColour = _gameBoard.Tiles[
                         GetRow(checkRows, a, b)][
-                        GetColumn(checkRows, a, b)];
+                        GetColumn(checkRows, a, b)].TileColour;
                     potentialTilesToDestroy = new List<Coordinates>()
                     {
                         new Coordinates(
@@ -114,7 +114,7 @@ public class TileSmasher
         foreach(var tile in tilesToDestroy)
         {
             _logger.LogInformation($"Destorying tile at ({tile.X}, {tile.Y})");
-            _gameBoard.Tiles[tile.X][tile.Y] = Tile.EmptyCell;
+            _gameBoard.Tiles[tile.X][tile.Y].IsDestroyed = true;
         }
     }
 }

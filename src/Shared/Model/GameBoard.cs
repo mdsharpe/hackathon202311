@@ -4,8 +4,8 @@ namespace Shared.Model;
 
 public class GameBoard
 {
-    private static ImmutableArray<Tile> TileTypes => Enum.GetValues(typeof(Tile)).OfType<Tile>()
-        .Where(tile => tile != Tile.EmptyCell)
+    private static ImmutableArray<TileColour> TileColourTypes => Enum.GetValues(typeof(TileColour)).OfType<TileColour>()
+        .Where(tile => tile != TileColour.EmptyCell)
         .ToImmutableArray();
 
     public Tile[][] Tiles { get; set; } = Array.Empty<Tile[]>();
@@ -20,17 +20,20 @@ public class GameBoard
             Tiles[rowIndex] = new Tile[ySize];
             for (int columnIndex = 0; columnIndex < ySize; columnIndex++)
             {
-                Tile randomTile = GenerateRandomTile();
-                Tiles[rowIndex][columnIndex] = randomTile;
+                Tiles[rowIndex][columnIndex] = new Tile() 
+                {
+                    TileColour = GenerateRandomTileColour(),
+                    IsDestroyed = false,
+                };
             }
         }
     }
 
-    public Tile GenerateRandomTile()
+    public TileColour GenerateRandomTileColour()
     {
         Random rnd = new Random();
-        int randomIndex = rnd.Next(0, TileTypes.Length);
-        Tile randomTile = TileTypes[randomIndex];
+        int randomIndex = rnd.Next(0, TileColourTypes.Length);
+        TileColour randomTile = TileColourTypes[randomIndex];
         return randomTile;
     }
 }
