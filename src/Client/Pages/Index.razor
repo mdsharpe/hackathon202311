@@ -1,7 +1,7 @@
 ﻿@page "/"
 @inject GameSignalRClient _signalRClient
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Shandy Crush Surprised</PageTitle>
 
 <style>
     .game-tile {
@@ -40,8 +40,9 @@
         </table>
         @if (SelectedTile.Value is not null)
         {
-            <MovementOverlay SelectedCoordinates="SelectedTile.Value ?? default"
-            OnMove="() => SelectedTile.OnNext(null)" />
+            <MovementOverlay
+                SelectedCoordinates="SelectedTile.Value ?? default"
+                OnMove="() => SelectedTile.OnNext(null)" />
         }
         @if (board.GetIsGameOver())
         {

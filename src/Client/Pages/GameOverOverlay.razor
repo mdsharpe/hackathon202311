@@ -1,9 +1,9 @@
 ﻿@inject GameSignalRClient _signalRClient
 
 <aside class="game-over-overlay">
-    <h1>Game over</h1>
+    <h1 class="game-over-overlay--title">Game over</h1>
     <input type="button"
-        class="reboot-button" 
+        class="game-over-overlay--reboot-button" 
         value="Start new game"
         @onclick="async () => await StartNewGame()"/>
 </aside>
