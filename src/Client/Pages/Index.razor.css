@@ -41,16 +41,17 @@
 }
 
 .game-tile.selected.destroyed, .game-tile.destroyed {
-    animation: glow 0.25s infinite alternate;
+    animation: glowFadeOut 2s alternate;
 }
 
-@keyframes glow {
+@keyframes glowFadeOut {
     from {
         border-color: #e9d973;
     }
 
     to {
         border-color: #a99943;
+        background-color: transparent;
     }
 }
 
