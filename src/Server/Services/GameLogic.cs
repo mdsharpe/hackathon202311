@@ -7,7 +7,7 @@ namespace Server.Services;
 public class GameLogic
 {
     private const int MinimumNumberMatches = 3;
-    private static readonly TimeSpan DestroyDelay = TimeSpan.FromMilliseconds(1500);
+    private static readonly TimeSpan DestroyDelay = TimeSpan.FromMilliseconds(1000);
 
     private readonly ILogger<GameLogic> _logger;
     private readonly ISystemClock _clock;
@@ -67,20 +67,32 @@ public class GameLogic
 
     public void MarkDestroyedTiles()
     {
-        var tilesToDestroy = CheckDimension(checkRows: true)
-            .Concat(CheckDimension(checkRows: false));
+        var now = _clock.UtcNow;
 
-        foreach (var tile in tilesToDestroy)
+        var coordsToDestroy = CheckDimension(checkRows: true)
+            .Concat(CheckDimension(checkRows: false))
+            .Distinct()
+            .ToArray();
+
+        foreach (var coord in coordsToDestroy)
         {
-            _board.Tiles[tile.X][tile.Y].DestroyedAt = _clock.UtcNow;
+            var tile = _board.Tiles[coord.X][coord.Y];
+
+            if (!tile.GetIsDestroyed())
+            {
+                tile.DestroyedAt = now;
+            }
         }
     }
 
     public Tile[] GetDestroyedTilesToCleanUp(bool skipDelay = false)
-        => _board.EnumerateAll()
+    {
+        var now = _clock.UtcNow;
+        return _board.EnumerateAll()
             .Where(o => o.GetIsDestroyed())
-            .Where(o => skipDelay || _clock.UtcNow.Subtract(o.DestroyedAt!.Value) > DestroyDelay)
+            .Where(o => skipDelay || now.Subtract(o.DestroyedAt!.Value) > DestroyDelay)
             .ToArray();
+    }
 
     public void CleanUpDestroyedTiles(IEnumerable<Tile> tiles)
     {

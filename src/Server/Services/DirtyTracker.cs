@@ -16,7 +16,7 @@ public class DirtyTracker
     public void EnterUpgradeableReadLock() => _locker.EnterUpgradeableReadLock();
     public void ExitUpgradeableReadLock() => _locker.ExitUpgradeableReadLock();
 
-    public void MarkAsDirty()
+    public void MarkAsDirty(bool interruptGameLoopDelay = false)
     {
         if (!_locker.IsWriteLockHeld)
         {
@@ -24,7 +24,10 @@ public class DirtyTracker
         }
         IsDirty = true;
 
-        _gameEngineDelaySkipTokenSource.Cancel();
+        if (interruptGameLoopDelay)
+        {
+            _gameEngineDelaySkipTokenSource.Cancel();
+        }
     }
 
     public void MarkAsClean()

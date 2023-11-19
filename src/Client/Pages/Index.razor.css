@@ -41,7 +41,8 @@
 }
 
 .game-tile.selected.destroyed, .game-tile.destroyed {
-    animation: glowFadeOut 2s alternate;
+    animation: glowFadeOut .25s alternate;
+    animation-iteration-count: infinite;
 }
 
 @keyframes glowFadeOut {

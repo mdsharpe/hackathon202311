@@ -42,7 +42,7 @@ public class GameHub : Hub, IGameHub
         try
         {
             _logic.Init();
-            _dirtyTracker.MarkAsDirty();
+            _dirtyTracker.MarkAsDirty(interruptGameLoopDelay: true);
         }
         finally
         {
@@ -80,7 +80,7 @@ public class GameHub : Hub, IGameHub
                 _board.Tiles[targetCoordinates.X][targetCoordinates.Y] = sourceTile;
 
                 _logic.MarkDestroyedTiles();
-                _dirtyTracker.MarkAsDirty();
+                _dirtyTracker.MarkAsDirty(interruptGameLoopDelay: true);
             }
             finally
             {
