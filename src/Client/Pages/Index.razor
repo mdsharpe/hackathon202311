@@ -3,41 +3,38 @@
 
 <PageTitle>Shandy Crush Surprised</PageTitle>
 
-<style>
-    .game-tile {
-        height: calc(@TileCssUtil.Height);
-        width: calc(@TileCssUtil.Width);
-    }
-</style>
-<header>
-    <img src="/images/Shandy-Crush.png" class="title-img" />
-</header>
+@if (Board.Value is not null) {
+    <style>
+        .game-board {
+            grid-template-columns: repeat(@Board.Value.Width, 1fr);
+            grid-template-rows: repeat(@Board.Value.Height, 1fr);
+        }
+    </style>
+}
 <div class="board-container" @onkeypress="e => OnKeyPress(e)">
     @{
         var board = Board.Value;
     }
     @if (board is not null)
     {
-        <table id="game-board" class="game-board">
+        <div class="game-board">
             @for (var y = board.Height - 1; y >= 0; y--)
             {
-                <tr>
-                    @for (var x = 0; x < board.Width; x++)
-                    {
-                        var tile = board.Tiles[x][y];
-                        var coord = new Coordinates(x, y);
-                        <td id="tile" class="game-tile
+                @for (var x = 0; x < board.Width; x++)
+                {
+                    var tile = board.Tiles[x][y];
+                    var coord = new Coordinates(x, y);
+                    <div class="game-tile
                             @GetTileColourCssClass(tile)
                             @(GetIsSelected(coord) ? "selected":"")
                             @(tile.GetIsDestroyed() ? "destroyed":"")">
-                            <input type="button"
-                                   class="tile-button"
-                                   @onclick="() => OnTileClick(coord)" />
-                        </td>
-                    }
-                </tr>
+                        <input type="button"
+                               class="tile-button"
+                               @onclick="() => OnTileClick(coord)" />
+                    </div>
+                }
             }
-        </table>
+        </div>
         @if (SelectedTile.Value is not null)
         {
             <MovementOverlay SelectedCoordinates="SelectedTile.Value ?? default"

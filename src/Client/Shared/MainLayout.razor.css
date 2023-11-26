@@ -1,0 +1,18 @@
+header {
+    text-align: center;
+}
+
+.title-img {
+    width: 55vw;
+}
+
+.main {
+    height: 100%;
+    width: 100%;
+}
+
+@media only screen and (max-height: 768px) {
+    .header {
+        display: none;
+    }
+}

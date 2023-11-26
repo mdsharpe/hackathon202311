@@ -1,22 +1,13 @@
-﻿header {
-    text-align: center;
-}
-
-.title-img {
-    width: 55vw;
+﻿.board-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .game-board {
-    background-color: #333333;
-    border-collapse: separate;
-    border-spacing: 0;
-    display: table;
-    height: calc(100vh - 10rem - 40px);
-    width: calc(100vw - 2rem - 15px);
-}
-
-.board-container {
-    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
 }
 
 .game-tile {
@@ -30,7 +21,13 @@
 }
 
 .game-tile.selected {
-    border: solid 3px white;
+    border-color: white;
+}
+
+@media only screen and (max-width: 768px) {
+    .game-tile {
+        border: 0 none;
+    }
 }
 
 .tile-button {
@@ -56,8 +53,8 @@
     }
 }
 
-.tile-EmptyTile {
-    background-color: transparent;
+.tile-EmptyCell {
+    background-color: #333;
 }
 
 .tile-RedTile {
