@@ -2,7 +2,7 @@
 
 public class GameBoard
 {
-    public Tile[][] Tiles { get; set; } = Array.Empty<Tile[]>();
+    public Tile[][] Tiles { get; set; } = [];
 
     public int Height => Tiles.Select(o => o.Length).DefaultIfEmpty().Max();
     public int Width => Tiles.Length;

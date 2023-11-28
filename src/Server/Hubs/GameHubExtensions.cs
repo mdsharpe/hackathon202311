@@ -6,6 +6,12 @@ namespace Server.Hubs;
 
 public static class GameHubExtensions
 {
-    public static async Task PushBoard(this IClientProxy clients, GameBoard board)
-        => await clients.SendAsync(nameof(IGameHubClient.OnBoardChanged), board);
+    public static async Task PushBoard(
+        this IClientProxy clients, 
+        GameBoard board, 
+        CancellationToken cancellationToken)
+        => await clients.SendAsync(
+            nameof(IGameHubClient.OnBoardChanged), 
+            board,
+            cancellationToken: cancellationToken);
 }

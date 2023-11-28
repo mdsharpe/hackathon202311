@@ -73,7 +73,7 @@ public class GameEngine : BackgroundService
                         _logic.MarkDestroyedTiles();
                     }
 
-                    await _hub.Clients.All.PushBoard(_board);
+                    await _hub.Clients.All.PushBoard(_board, cancellationToken);
                 }
                 finally
                 {

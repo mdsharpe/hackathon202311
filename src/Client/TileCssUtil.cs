@@ -2,6 +2,6 @@
 
 public static class TileCssUtil
 {
-    public static string Width = $"(100% / {GlobalConstants.xSize})";
-    public static string Height = $"(100% / {GlobalConstants.ySize})";
+    public static string Width = $"(100% / {GlobalConstants.SizeX})";
+    public static string Height = $"(100% / {GlobalConstants.SizeY})";
 }

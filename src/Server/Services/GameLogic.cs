@@ -8,7 +8,6 @@ public class GameLogic
     private const int MinimumNumberMatches = 3;
     private static readonly TimeSpan DestroyDelay = TimeSpan.FromMilliseconds(1000);
 
-    private readonly ILogger<GameLogic> _logger;
     private readonly TimeProvider _timeProvider;
     private readonly GameBoard _board;
     private readonly Random _rng = new();
@@ -19,23 +18,21 @@ public class GameLogic
 
     public GameLogic(
         TimeProvider timeProvider,
-        GameBoard board,
-        ILogger<GameLogic> logger)
+        GameBoard board)
     {
         _timeProvider = timeProvider;
         _board = board;
-        _logger = logger;
     }
 
     public void Init()
     {
-        _board.Tiles = new Tile[GlobalConstants.xSize][];
+        _board.Tiles = new Tile[GlobalConstants.SizeX][];
 
-        for (int x = 0; x < GlobalConstants.xSize; x++)
+        for (int x = 0; x < GlobalConstants.SizeX; x++)
         {
-            _board.Tiles[x] = new Tile[GlobalConstants.ySize];
+            _board.Tiles[x] = new Tile[GlobalConstants.SizeY];
 
-            for (int y = 0; y < GlobalConstants.ySize; y++)
+            for (int y = 0; y < GlobalConstants.SizeY; y++)
             {
                 _board.Tiles[x][y] = new Tile()
                 {
@@ -220,7 +217,7 @@ public class GameLogic
                     else
                     {
                         confirmedTilesToDestroyForDimension.AddRange(potentialTilesToDestroy);
-                        potentialTilesToDestroy = new List<Coordinates>(); // Clear the list so it's not added multiple times
+                        potentialTilesToDestroy = []; // Clear the list so it's not added multiple times
                         confirmedTilesToDestroyForDimension.Add(
                             new Coordinates(
                                 GetRow(checkRows, a, b),
@@ -233,12 +230,12 @@ public class GameLogic
                     matchedTileColour = _board.Tiles[
                         GetRow(checkRows, a, b)][
                         GetColumn(checkRows, a, b)].TileColour;
-                    potentialTilesToDestroy = new List<Coordinates>()
-                    {
+                    potentialTilesToDestroy =
+                    [
                         new Coordinates(
                             GetRow(checkRows, a, b),
                             GetColumn(checkRows, a, b))
-                    };
+                    ];
                 }
             }
         }
