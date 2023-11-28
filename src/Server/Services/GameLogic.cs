@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using Microsoft.Extensions.Internal;
 using Shared.Model;
 
 namespace Server.Services;
@@ -10,7 +9,7 @@ public class GameLogic
     private static readonly TimeSpan DestroyDelay = TimeSpan.FromMilliseconds(1000);
 
     private readonly ILogger<GameLogic> _logger;
-    private readonly ISystemClock _clock;
+    private readonly TimeProvider _timeProvider;
     private readonly GameBoard _board;
     private readonly Random _rng = new();
 
@@ -19,11 +18,11 @@ public class GameLogic
         .ToImmutableArray();
 
     public GameLogic(
-        ISystemClock clock,
+        TimeProvider timeProvider,
         GameBoard board,
         ILogger<GameLogic> logger)
     {
-        _clock = clock;
+        _timeProvider = timeProvider;
         _board = board;
         _logger = logger;
     }
@@ -65,9 +64,60 @@ public class GameLogic
         while (_board.Tiles.SelectMany(t => t).Any(t => t.TileColour == TileColour.EmptyCell));
     }
 
+    public bool GetIsMoveValid(Move move)
+    {
+        if (move.SourceCoordinates.X == 0 && move.Direction == Direction.Left)
+        {
+            return false;
+        }
+
+        if (move.SourceCoordinates.X == _board.Width - 1 && move.Direction == Direction.Right)
+        {
+            return false;
+        }
+
+        if (move.SourceCoordinates.Y == 0 && move.Direction == Direction.Down)
+        {
+            return false;
+        }
+
+        if (move.SourceCoordinates.Y == _board.Height - 1 && move.Direction == Direction.Up)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void ApplyMoves(IEnumerable<Move> moves)
+    {
+        foreach (var move in moves)
+        {
+            ApplyMove(move);
+        }
+    }
+
+    public void ApplyMove(Move move)
+    {
+        var sourceCoordinates = move.SourceCoordinates;
+        var direction = move.Direction;
+
+        var sourceTile = _board.Tiles[sourceCoordinates.X][sourceCoordinates.Y];
+        var targetCoordinates = GetTargetCoordinates(sourceCoordinates, direction);
+        var targetTile = _board.Tiles[targetCoordinates.X][targetCoordinates.Y];
+
+        if (sourceTile.GetIsDestroyed() || targetTile.GetIsDestroyed())
+        {
+            return;
+        }
+
+        _board.Tiles[sourceCoordinates.X][sourceCoordinates.Y] = targetTile;
+        _board.Tiles[targetCoordinates.X][targetCoordinates.Y] = sourceTile;
+    }
+
     public void MarkDestroyedTiles()
     {
-        var now = _clock.UtcNow;
+        var now = _timeProvider.GetUtcNow();
 
         var coordsToDestroy = CheckDimension(checkRows: true)
             .Concat(CheckDimension(checkRows: false))
@@ -87,7 +137,8 @@ public class GameLogic
 
     public Tile[] GetDestroyedTilesToCleanUp(bool skipDelay = false)
     {
-        var now = _clock.UtcNow;
+        var now = _timeProvider.GetUtcNow();
+
         return _board.EnumerateAll()
             .Where(o => o.GetIsDestroyed())
             .Where(o => skipDelay || now.Subtract(o.DestroyedAt!.Value) > DestroyDelay)
@@ -100,6 +151,30 @@ public class GameLogic
         {
             tile.TileColour = TileColour.EmptyCell;
             tile.DestroyedAt = null;
+        }
+    }
+
+    private Coordinates GetTargetCoordinates(Coordinates sourceCoordinates, Direction direction)
+    {
+        if (direction == Direction.Up)
+        {
+            return new Coordinates(sourceCoordinates.X, sourceCoordinates.Y + 1);
+        }
+        else if (direction == Direction.Down)
+        {
+            return new Coordinates(sourceCoordinates.X, sourceCoordinates.Y - 1);
+        }
+        else if (direction == Direction.Left)
+        {
+            return new Coordinates(sourceCoordinates.X - 1, sourceCoordinates.Y);
+        }
+        else if (direction == Direction.Right)
+        {
+            return new Coordinates(sourceCoordinates.X + 1, sourceCoordinates.Y);
+        }
+        else
+        {
+            throw new InvalidOperationException();
         }
     }
 

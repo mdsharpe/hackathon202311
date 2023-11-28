@@ -6,23 +6,26 @@ namespace Server.Services;
 
 public class GameEngine : BackgroundService
 {
-    private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(500);
+    private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(333);
 
-    private readonly GameBoard _board;
     private readonly IHubContext<GameHub> _hub;
+    private readonly GameBoard _board;
+    private readonly BoardLock _boardLock;
+    private readonly MoveQueue _moveQueue;
     private readonly GameLogic _logic;
-    private readonly DirtyTracker _dirtyTracker;
 
     public GameEngine(
-        GameBoard board,
         IHubContext<GameHub> hub,
-        GameLogic logic,
-        DirtyTracker dirtyTracker)
+        GameBoard board,
+        BoardLock boardLock,
+        MoveQueue moveQueue,
+        GameLogic logic)
     {
-        _board = board;
         _hub = hub;
+        _board = board;
+        _boardLock = boardLock;
+        _moveQueue = moveQueue;
         _logic = logic;
-        _dirtyTracker = dirtyTracker;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,17 +34,12 @@ public class GameEngine : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            await HandleBoard();
-
-            var delayCancellation = CancellationTokenSource.CreateLinkedTokenSource(
-                stoppingToken,
-                _dirtyTracker.GameEngineDelaySkipToken);
-
-            var taskDelay = Task.Delay(Interval, delayCancellation.Token);
+            var delay = Task.Delay(Interval, stoppingToken);
+            var processing = HandleBoard(stoppingToken);
 
             try
             {
-                await taskDelay;
+                await Task.WhenAll(processing, delay);
             }
             catch (TaskCanceledException)
             {
@@ -49,41 +47,43 @@ public class GameEngine : BackgroundService
         }
     }
 
-    private async Task HandleBoard()
+    private async Task HandleBoard(CancellationToken cancellationToken)
     {
-        _dirtyTracker.EnterUpgradeableReadLock();
+        _boardLock.EnterUpgradeableReadLock();
 
         try
         {
+            var moves = _moveQueue.DequeueAll();
             var tilesToCleanUp = _logic.GetDestroyedTilesToCleanUp();
 
-            if (tilesToCleanUp.Any() || _dirtyTracker.IsDirty)
+            if (tilesToCleanUp.Any() || moves.Any())
             {
-                _dirtyTracker.EnterWriteLock();
+                _boardLock.EnterWriteLock();
 
                 try
                 {
                     if (tilesToCleanUp.Any())
                     {
                         _logic.CleanUpDestroyedTiles(tilesToCleanUp);
-                        _dirtyTracker.MarkAsDirty();
                     }
 
-                    if (_dirtyTracker.IsDirty)
+                    if (moves.Any())
                     {
-                        await _hub.Clients.All.PushBoard(_board);
-                        _dirtyTracker.MarkAsClean();
+                        _logic.ApplyMoves(moves);
+                        _logic.MarkDestroyedTiles();
                     }
+
+                    await _hub.Clients.All.PushBoard(_board);
                 }
                 finally
                 {
-                    _dirtyTracker.ExitWriteLock();
+                    _boardLock.ExitWriteLock();
                 }
             }
         }
         finally
         {
-            _dirtyTracker.ExitUpgradeableReadLock();
+            _boardLock.ExitUpgradeableReadLock();
         }
     }
 }

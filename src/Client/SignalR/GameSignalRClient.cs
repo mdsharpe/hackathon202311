@@ -19,7 +19,7 @@ public class GameSignalRClient
 
     public async Task Move(Coordinates coordinates, Direction direction)
     {
-        await HubConnection.InvokeAsync(nameof(IGameHub.Move), coordinates, direction);
+        await HubConnection.InvokeAsync(nameof(IGameHub.Move), new Move(coordinates, direction));
     }
 
     public async Task StartNewGame()

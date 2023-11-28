@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Internal;
-using Server.Hubs;
+﻿using Server.Hubs;
 using Server.Services;
 using Shared.Model;
 
@@ -11,8 +10,9 @@ builder.Services
     .AddSingleton<GameBoard>()
     .AddSingleton<GameHub>()
     .AddSingleton<GameLogic>()
-    .AddSingleton<ISystemClock, SystemClock>()
-    .AddSingleton<DirtyTracker>();
+    .AddSingleton(TimeProvider.System)
+    .AddSingleton<BoardLock>()
+    .AddSingleton<MoveQueue>();
 
 builder.Services.AddRazorPages();
 
