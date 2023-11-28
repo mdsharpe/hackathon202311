@@ -14,10 +14,14 @@ builder.Services
     .AddSingleton<ISystemClock, SystemClock>()
     .AddSingleton<DirtyTracker>();
 
+builder.Services.AddRazorPages();
+
 builder.Services
     .AddSignalR(configure =>
     {
+#if DEBUG
         configure.EnableDetailedErrors = true;
+#endif
     });
 
 var app = builder.Build();
@@ -37,7 +41,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.MapRazorPages();
 app.MapHub<GameHub>("/gamehub");
-app.MapFallbackToFile("index.html");
+app.MapFallbackToPage("/Index");
 
 app.Run();
